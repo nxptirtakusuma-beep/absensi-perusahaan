@@ -64,24 +64,6 @@ export default function DashboardAdmin() {
     }
   };
 
-  const handleUpdateGaji = async (id: string, nama: string) => {
-    const nominal = prompt(`Masukkan nominal gaji baru untuk ${nama}:`, '5000000');
-    if (nominal !== null) {
-      const parsedGaji = parseInt(nominal);
-      if (isNaN(parsedGaji)) {
-        alert('Nominal gaji harus berupa angka.');
-        return;
-      }
-      const { error } = await supabase.from('karyawan').update({ gaji_pokok: parsedGaji }).eq('id', id);
-      if (error) {
-        alert('Gagal memperbarui gaji: ' + error.message);
-      } else {
-        alert('Gaji pokok berhasil diperbarui!');
-        fetchKaryawan();
-      }
-    }
-  };
-
   const handleExportExcel = () => {
     let csv = "Nama Karyawan;Tanggal;Jam Masuk;Jam Pulang;Total Jam Kerja;Status Kehadiran;Lokasi GPS\n";
     riwayatAbsen.forEach(r => {
@@ -126,7 +108,7 @@ export default function DashboardAdmin() {
         <button onClick={handleExportExcel} style={{ background: '#059669', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Export Laporan Absensi ke Excel</button>
       </div>
 
-      <h3 style={{ fontSize: '15px', color: '#475569', marginBottom: '12px' }}>Manajemen Data Pegawai & Gaji</h3>
+      <h3 style={{ fontSize: '15px', color: '#475569', marginBottom: '12px' }}>Manajemen Data Pegawai PT. Moonlight Indonesia</h3>
       <div style={{ overflowX: 'auto', maxHeight: '350px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
           <thead>
@@ -134,23 +116,20 @@ export default function DashboardAdmin() {
               <th style={{ padding: '10px' }}>Nama</th>
               <th style={{ padding: '10px' }}>Jabatan</th>
               <th style={{ padding: '10px' }}>Email Gmail</th>
-              <th style={{ padding: '10px' }}>Gaji Pokok</th>
               <th style={{ padding: '10px' }}>Aksi Kelola</th>
             </tr>
           </thead>
           <tbody>
             {daftarKaryawan.length === 0 ? (
-              <tr><td colSpan={5} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>Belum ada data karyawan.</td></tr>
+              <tr><td colSpan={4} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>Belum ada data karyawan.</td></tr>
             ) : (
               daftarKaryawan.map(k => (
                 <tr key={k.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                   <td style={{ padding: '10px', fontWeight: 'bold' }}>{k.nama}</td>
                   <td style={{ padding: '10px', color: '#64748b' }}>{k.jabatan}</td>
                   <td style={{ padding: '10px', color: '#0284c7' }}>{k.email || '-'}</td>
-                  <td style={{ padding: '10px', color: '#16a34a', fontWeight: 'bold' }}>Rp {(k.gaji_pokok || 4500000).toLocaleString('id-ID')}</td>
-                  <td style={{ padding: '10px', display: 'flex', gap: '6px' }}>
-                    <button onClick={() => handleUpdateGaji(k.id, k.nama)} style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px' }}>Atur Gaji</button>
-                    <button onClick={() => handleHapusKaryawan(k.id, k.nama)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px' }}>Hapus Akun</button>
+                  <td style={{ padding: '10px' }}>
+                    <button onClick={() => handleHapusKaryawan(k.id, k.nama)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold' }}>Hapus Akun</button>
                   </td>
                 </tr>
               ))
