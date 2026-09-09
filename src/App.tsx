@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabaseClient';
 
 interface Karyawan {
@@ -109,9 +109,11 @@ export default function App() {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        await videoRef.current.play();
       }
     } catch (err) {
       console.error("Gagal mengakses kamera:", err);
+      alert("Pastikan izin kamera di browser sudah diaktifkan.");
     }
   };
 
@@ -199,7 +201,6 @@ export default function App() {
 
     setLoading(true);
     if (kantorConfig.id) {
-      // Update data yang sudah ada
       const { error } = await supabase.from('pengaturan_kantor').update({
         nama_perusahaan: inputNamaPerusahaan,
         latitude: parseFloat(inputLat),
@@ -214,7 +215,6 @@ export default function App() {
         fetchPengaturanKantor();
       }
     } else {
-      // Insert baru jika belum ada baris pengaturan
       const { error } = await supabase.from('pengaturan_kantor').insert([{
         nama_perusahaan: inputNamaPerusahaan,
         latitude: parseFloat(inputLat),
@@ -527,10 +527,6 @@ export default function App() {
     return matchSearch && matchTanggal;
   });
 
-  const totalHadir = riwayatAbsen.filter(r => r.status.includes('Hadir')).length;
-  const totalTerlambat = riwayatAbsen.filter(r => r.status.includes('Terlambat')).length;
-  const totalIzinSakit = riwayatAbsen.filter(r => r.status === 'Izin' || r.status === 'Sakit' || r.status === 'Cuti').length;
-
   const exportToExcel = () => {
     if (filteredAbsen.length === 0) return;
     let csv = "data:text/csv;charset=utf-8,ID Karyawan;Email Gmail;Nama Karyawan;Jabatan;Tanggal;Jam Masuk;Jam Pulang;Total Jam Kerja;Lokasi GPS;Status\n";
@@ -687,7 +683,7 @@ export default function App() {
               <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
                 <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: '#334155' }}>📸 Verifikasi Wajah:</label>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <video ref={videoRef} autoPlay playsInline style={{ width: '220px', height: '165px', borderRadius: '8px', background: '#000', objectFit: 'cover' }} />
+                  <video ref={videoRef} autoPlay playsInline muted style={{ width: '220px', height: '165px', borderRadius: '8px', background: '#000', objectFit: 'cover' }} />
                   {fotoSnapshot ? (
                     <div>
                       <img src={fotoSnapshot} alt="Snapshot" style={{ width: '220px', height: '165px', borderRadius: '8px', objectFit: 'cover', border: '2px solid #10b981' }} />
@@ -815,7 +811,6 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB PENGATURAN KANTOR & GPS */}
             {activeTab === 'pengaturan' && (
               <div>
                 <h3 style={{ fontSize: '16px', color: '#334155', marginBottom: '12px' }}>⚙️ Pengaturan Titik Koordinat Kantor & Geofencing</h3>
