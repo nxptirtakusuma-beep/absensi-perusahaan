@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface NavbarProps {
   namaPerusahaan: string;
   onNavClick: (view: 'landing' | 'portal' | 'admin') => void;
