@@ -29,9 +29,10 @@ export default function PortalKaryawan() {
   // Lupa Password
   const [lupaEmail, setLupaEmail] = useState('');
 
-  // Kamera & GPS
+  // Kamera & GPS & Jenis Absen
   const [lokasiUser, setLokasiUser] = useState('Mendeteksi GPS...');
   const [fotoSnapshot, setFotoSnapshot] = useState<string | null>(null);
+  const [jenisAbsen, setJenisAbsen] = useState<'Masuk' | 'Pulang'>('Masuk');
   const [statusAbsen, setStatusAbsen] = useState('Hadir');
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -186,25 +187,66 @@ export default function PortalKaryawan() {
     const tanggalHariIni = now.toLocaleDateString('id-ID');
     const jamSekarang = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
-    const { error } = await supabase.from('absensi').insert([{
-      karyawan_id: karyawanLogin.id,
-      id_karyawan: karyawanLogin.id_karyawan || '-',
-      nama: karyawanLogin.nama,
-      jabatan: karyawanLogin.jabatan,
-      tanggal: tanggalHariIni,
-      jam_masuk: jamSekarang,
-      jam_pulang: '-',
-      total_jam: '-',
-      status: statusAbsen,
-      lokasi: lokasiUser
-    }]);
+    // Cek apakah sudah ada data absen hari ini untuk karyawan ini
+    const { data: existingData } = await supabase
+      .from('absensi')
+      .select('*')
+      .eq('karyawan_id', karyawanLogin.id)
+      .eq('tanggal', tanggalHariIni)
+      .single();
 
-    if (error) {
-      alert('Gagal mengirim absensi: ' + error.message);
+    if (jenisAbsen === 'Masuk') {
+      if (existingData) {
+        alert('Anda sudah melakukan Absen Masuk hari ini.');
+        return;
+      }
+      const { error } = await supabase.from('absensi').insert([{
+        karyawan_id: karyawanLogin.id,
+        id_karyawan: karyawanLogin.id_karyawan || '-',
+        nama: karyawanLogin.nama,
+        jabatan: karyawanLogin.jabatan,
+        tanggal: tanggalHariIni,
+        jam_masuk: jamSekarang,
+        jam_pulang: '-',
+        total_jam: 'Sedang Berjalan',
+        status: statusAbsen,
+        lokasi: lokasiUser
+      }]);
+      if (error) alert('Gagal absen masuk: ' + error.message);
+      else alert('Absen Masuk berhasil dicatat secara realtime!');
     } else {
-      alert(`Absen berhasil dicatat dengan status: ${statusAbsen}!`);
-      setFotoSnapshot(null);
+      // Absen Pulang: Hitung total jam kerja realtime
+      if (!existingData) {
+        alert('Anda belum melakukan Absen Masuk hari ini.');
+        return;
+      }
+
+      // Hitung selisih jam masuk dan pulang
+      const jamMasukStr = existingData.jam_masuk;
+      let totalJamStr = '0 Jam';
+      try {
+        const [hM, mM] = jamMasukStr.split(':').map(Number);
+        const [hP, mP] = jamSekarang.split(':').map(Number);
+        const selisihMenit = (hP * 60 + mP) - (hM * 60 + mM);
+        if (selisihMenit > 0) {
+          const jam = Math.floor(selisihMenit / 60);
+          const menit = selisihMenit % 60;
+          totalJamStr = `${jam} Jam ${menit} Menit`;
+        }
+      } catch {
+        totalJamStr = 'hitung otomatis';
+      }
+
+      const { error } = await supabase.from('absensi').update({
+        jam_pulang: jamSekarang,
+        total_jam: totalJamStr
+      }).eq('id', existingData.id);
+
+      if (error) alert('Gagal absen pulang: ' + error.message);
+      else alert(`Absen Pulang berhasil dicatat! Total Kerja: ${totalJamStr}`);
     }
+
+    setFotoSnapshot(null);
   };
 
   const handleDownloadSlip = () => {
@@ -318,6 +360,14 @@ export default function PortalKaryawan() {
 
           {subView === 'dashboard_kry' && (
             <form onSubmit={handleKirimAbsen} style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxWidth: '360px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', marginBottom: '6px' }}>Jenis Absen:</label>
+                <select value={jenisAbsen} onChange={e => setJenisAbsen(e.target.value as 'Masuk' | 'Pulang')} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                  <option value="Masuk">🟢 Absen Masuk</option>
+                  <option value="Pulang">🔴 Absen Pulang</option>
+                </select>
+              </div>
+
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', marginBottom: '6px' }}>Status Kehadiran:</label>
                 <select value={statusAbsen} onChange={e => setStatusAbsen(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
