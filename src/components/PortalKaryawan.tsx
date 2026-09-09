@@ -235,7 +235,7 @@ export default function PortalKaryawan() {
         </div>
       )}
 
-      {subView === 'dashboard_kry' && karyawanLogin && (
+      {karyawanLogin && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h2 style={{ color: '#1e293b', margin: 0 }}>Halo, {karyawanLogin.nama}</h2>
