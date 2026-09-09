@@ -18,18 +18,14 @@ export default function PortalKaryawan() {
   const [inputPin, setInputPin] = useState('');
   const [karyawanLogin, setKaryawanLogin] = useState<Karyawan | null>(null);
 
-  // Form Pendaftaran Karyawan / Admin
   const [regId, setRegId] = useState('');
   const [regNama, setRegNama] = useState('');
   const [regJabatan, setRegJabatan] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPin, setRegPin] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Lupa Password
   const [lupaEmail, setLupaEmail] = useState('');
 
-  // Kamera & GPS & Jenis Absen
   const [lokasiUser, setLokasiUser] = useState('Mendeteksi GPS...');
   const [fotoSnapshot, setFotoSnapshot] = useState<string | null>(null);
   const [jenisAbsen, setJenisAbsen] = useState<'Masuk' | 'Pulang'>('Masuk');
@@ -84,7 +80,7 @@ export default function PortalKaryawan() {
       if (ctx) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         setFotoSnapshot(canvas.toDataURL('image/jpeg'));
-        alert('Verifikasi wajah (Vermuk) berhasil diambil!');
+        alert('Verifikasi wajah (Vermuk) berhasil!');
       }
     }
   };
@@ -187,7 +183,6 @@ export default function PortalKaryawan() {
     const tanggalHariIni = now.toLocaleDateString('id-ID');
     const jamSekarang = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
-    // Cek apakah sudah ada data absen hari ini untuk karyawan ini
     const { data: existingData } = await supabase
       .from('absensi')
       .select('*')
@@ -215,13 +210,11 @@ export default function PortalKaryawan() {
       if (error) alert('Gagal absen masuk: ' + error.message);
       else alert('Absen Masuk berhasil dicatat secara realtime!');
     } else {
-      // Absen Pulang: Hitung total jam kerja realtime
       if (!existingData) {
         alert('Anda belum melakukan Absen Masuk hari ini.');
         return;
       }
 
-      // Hitung selisih jam masuk dan pulang
       const jamMasukStr = existingData.jam_masuk;
       let totalJamStr = '0 Jam';
       try {
@@ -258,7 +251,8 @@ export default function PortalKaryawan() {
       <html>
         <head><title>Slip Gaji - ${karyawanLogin.nama}</title></head>
         <body style="font-family: Arial; padding: 30px;">
-          <h2 style="text-align: center; color: #1e3a8a;">SLIP GAJI RESMI KARYAWAN</h2>
+          <h2 style="text-align: center; color: #0f172a;">PT. MOONLIGHT INDONESIA</h2>
+          <h3 style="text-align: center; color: #3b82f6;">SLIP GAJI RESMI KARYAWAN</h3>
           <hr/>
           <p><b>Nama:</b> ${karyawanLogin.nama}</p>
           <p><b>Jabatan:</b> ${karyawanLogin.jabatan}</p>
@@ -268,7 +262,7 @@ export default function PortalKaryawan() {
           <p><b>Tunjangan & Kinerja:</b> Rp 500.000</p>
           <p><b>Total Pendapatan:</b> <span style="color: green; font-weight: bold;">Rp ${(gaji + 500000).toLocaleString('id-ID')}</span></p>
           <br/><br/>
-          <p style="text-align: right;">HRD Manager Enterprise</p>
+          <p style="text-align: right;">HRD Manager PT. Moonlight Indonesia</p>
         </body>
       </html>
     `;
@@ -289,17 +283,17 @@ export default function PortalKaryawan() {
     <div style={{ background: '#fff', padding: '24px', borderRadius: '16px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
       {subView === 'login' && !karyawanLogin && (
         <div>
-          <h2 style={{ color: '#1e293b', marginBottom: '16px' }}>👤 Login Karyawan</h2>
+          <h2 style={{ color: '#0f172a', marginBottom: '16px' }}>👤 Login Karyawan</h2>
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
             <select value={selectedId} onChange={e => setSelectedId(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
               <option value="">-- Pilih Nama Karyawan --</option>
               {daftarKaryawan.map(k => <option key={k.id} value={k.id}>{k.nama} ({k.jabatan})</option>)}
             </select>
             <input type="password" maxLength={6} placeholder="PIN / Password..." value={inputPin} onChange={e => setInputPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-            <button type="submit" style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Masuk Portal</button>
+            <button type="submit" style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Masuk Portal</button>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginTop: '6px' }}>
               <span onClick={() => setSubView('daftar_kry')} style={{ color: '#0284c7', cursor: 'pointer', fontWeight: 'bold' }}>Daftar Karyawan</span>
-              <span onClick={() => setSubView('daftar_adm')} style={{ color: '#10b981', cursor: 'pointer', fontWeight: 'bold' }}>Daftar Admin</span>
+              <span onClick={() => setSubView('daftar_adm')} style={{ color: '#059669', cursor: 'pointer', fontWeight: 'bold' }}>Daftar Admin</span>
               <span onClick={() => setSubView('lupa')} style={{ color: '#dc2626', cursor: 'pointer', fontWeight: 'bold' }}>Lupa PIN?</span>
             </div>
           </form>
@@ -308,14 +302,14 @@ export default function PortalKaryawan() {
 
       {subView === 'daftar_kry' && (
         <div>
-          <h2 style={{ color: '#1e293b', marginBottom: '16px' }}>✍️ Pendaftaran Akun Karyawan Mandiri</h2>
+          <h2 style={{ color: '#0f172a', marginBottom: '16px' }}>✍️ Pendaftaran Akun Karyawan Mandiri</h2>
           <form onSubmit={handleDaftarKaryawan} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
             <input type="text" placeholder="ID Karyawan / NIP..." value={regId} onChange={e => setRegId(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="text" placeholder="Nama Lengkap..." value={regNama} onChange={e => setRegNama(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="text" placeholder="Jabatan..." value={regJabatan} onChange={e => setRegJabatan(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="email" placeholder="Alamat Gmail..." value={regEmail} onChange={e => setRegEmail(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="password" maxLength={6} placeholder="Buat PIN / Password..." value={regPin} onChange={e => setRegPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-            <button type="submit" disabled={loading} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Daftar Karyawan'}</button>
+            <button type="submit" disabled={loading} style={{ background: '#059669', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Daftar Karyawan'}</button>
             <span onClick={() => setSubView('login')} style={{ color: '#64748b', cursor: 'pointer', fontSize: '13px' }}>← Kembali ke Login</span>
           </form>
         </div>
@@ -323,12 +317,12 @@ export default function PortalKaryawan() {
 
       {subView === 'daftar_adm' && (
         <div>
-          <h2 style={{ color: '#1e293b', marginBottom: '16px' }}>✍️ Pendaftaran Akun Admin Mandiri</h2>
+          <h2 style={{ color: '#0f172a', marginBottom: '16px' }}>✍️ Pendaftaran Akun Admin Mandiri</h2>
           <form onSubmit={handleDaftarAdmin} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
             <input type="text" placeholder="Nama Lengkap Admin..." value={regNama} onChange={e => setRegNama(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="email" placeholder="Alamat Gmail Admin..." value={regEmail} onChange={e => setRegEmail(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="password" placeholder="Password Admin..." value={regPin} onChange={e => setRegPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-            <button type="submit" disabled={loading} style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Daftar Admin'}</button>
+            <button type="submit" disabled={loading} style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Daftar Admin'}</button>
             <span onClick={() => setSubView('login')} style={{ color: '#64748b', cursor: 'pointer', fontSize: '13px' }}>← Kembali ke Login</span>
           </form>
         </div>
@@ -336,7 +330,7 @@ export default function PortalKaryawan() {
 
       {subView === 'lupa' && (
         <div>
-          <h2 style={{ color: '#1e293b', marginBottom: '16px' }}>🔄 Pemulihan PIN via Gmail</h2>
+          <h2 style={{ color: '#0f172a', marginBottom: '16px' }}>🔄 Pemulihan PIN via Gmail</h2>
           <form onSubmit={handleLupaPassword} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
             <input type="email" placeholder="Masukkan Gmail terdaftar..." value={lupaEmail} onChange={e => setLupaEmail(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <button type="submit" disabled={loading} style={{ background: '#0284c7', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Kirim Pemulihan</button>
@@ -348,14 +342,14 @@ export default function PortalKaryawan() {
       {karyawanLogin && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h2 style={{ color: '#1e293b', margin: 0 }}>Halo, {karyawanLogin.nama}</h2>
+            <h2 style={{ color: '#0f172a', margin: 0 }}>Halo, {karyawanLogin.nama}</h2>
             <button onClick={handleLogout} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>Keluar (Logout)</button>
           </div>
           <p style={{ fontSize: '13px', color: '#64748b' }}>Lokasi GPS: <strong>{lokasiUser}</strong></p>
           
           <div style={{ display: 'flex', gap: '10px', margin: '15px 0' }}>
-            <button onClick={() => setSubView('dashboard_kry')} style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Absensi & Vermuk</button>
-            <button onClick={() => setSubView('slip_gaji')} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Unduh Slip Gaji</button>
+            <button onClick={() => setSubView('dashboard_kry')} style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Absensi & Vermuk</button>
+            <button onClick={() => setSubView('slip_gaji')} style={{ background: '#059669', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Unduh Slip Gaji</button>
           </div>
 
           {subView === 'dashboard_kry' && (
@@ -385,13 +379,13 @@ export default function PortalKaryawan() {
                 <button type="button" onClick={ambilFoto} style={{ marginTop: '8px', background: '#0284c7', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>Ambil Foto Vermuk</button>
               </div>
               <canvas ref={canvasRef} style={{ display: 'none' }} />
-              <button type="submit" style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Kirim Absen Sekarang</button>
+              <button type="submit" style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Kirim Absen Sekarang</button>
             </form>
           )}
 
           {subView === 'slip_gaji' && (
             <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', maxWidth: '400px' }}>
-              <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#1e293b' }}>Slip Gaji Bulanan</h3>
+              <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#0f172a' }}>Slip Gaji Bulanan</h3>
               <p style={{ fontSize: '14px', color: '#475569' }}>Gaji Pokok: Rp {(karyawanLogin.gaji_pokok || 4500000).toLocaleString('id-ID')}</p>
               <button onClick={handleDownloadSlip} style={{ background: '#059669', color: '#fff', border: 'none', padding: '10px 16px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Download Slip Gaji (PDF)</button>
             </div>
