@@ -15,6 +15,7 @@ interface Absen {
   tanggal: string;
   jam_masuk: string;
   jam_pulang: string;
+  total_jam: string;
   status: string;
   lokasi?: string;
 }
@@ -82,14 +83,14 @@ export default function DashboardAdmin() {
   };
 
   const handleExportExcel = () => {
-    let csv = "Nama Karyawan;Jabatan;Tanggal;Jam Masuk;Jam Pulang;Status Kehadiran;Lokasi GPS\n";
+    let csv = "Nama Karyawan;Tanggal;Jam Masuk;Jam Pulang;Total Jam Kerja;Status Kehadiran;Lokasi GPS\n";
     riwayatAbsen.forEach(r => {
-      csv += `"${r.nama}";"-";"${r.tanggal}";"${r.jam_masuk}";"${r.jam_pulang}";"${r.status}";"${r.lokasi || '-'}"\n`;
+      csv += `"${r.nama}";"${r.tanggal}";"${r.jam_masuk}";"${r.jam_pulang}";"${r.total_jam || '0 Jam'}";"${r.status}";"${r.lokasi || '-'}"\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", "Laporan_Absensi_Enterprise.csv");
+    link.setAttribute("download", "Laporan_Absensi_Moonlight.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -104,11 +105,11 @@ export default function DashboardAdmin() {
   if (!isLoggedIn) {
     return (
       <div style={{ background: '#fff', padding: '30px', borderRadius: '16px', maxWidth: '380px', margin: '40px auto', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', textAlign: 'center' }}>
-        <h2 style={{ color: '#1e293b', marginBottom: '16px' }}>🔐 Login Khusus Admin</h2>
+        <h2 style={{ color: '#0f172a', marginBottom: '16px' }}>🔐 Login Khusus Admin</h2>
         <form onSubmit={handleLoginAdmin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <input type="text" placeholder="Username Admin..." value={adminUser} onChange={e => setAdminUser(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
           <input type="password" placeholder="Password Admin..." value={adminPass} onChange={e => setAdminPass(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-          <button type="submit" style={{ background: '#10b981', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Masuk Dashboard Admin</button>
+          <button type="submit" style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Masuk Dashboard Admin</button>
         </form>
       </div>
     );
@@ -117,12 +118,12 @@ export default function DashboardAdmin() {
   return (
     <div style={{ background: '#fff', padding: '24px', borderRadius: '16px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2 style={{ color: '#1e293b', margin: 0 }}>📊 Dashboard Eksekutif HR & Admin</h2>
+        <h2 style={{ color: '#0f172a', margin: 0 }}>📊 Dashboard Eksekutif HR & Admin</h2>
         <button onClick={handleLogoutAdmin} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>Keluar (Logout)</button>
       </div>
 
       <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-        <button onClick={handleExportExcel} style={{ background: '#059669', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Export Laporan Lengkap ke Excel</button>
+        <button onClick={handleExportExcel} style={{ background: '#059669', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Export Laporan Absensi ke Excel</button>
       </div>
 
       <h3 style={{ fontSize: '15px', color: '#475569', marginBottom: '12px' }}>Manajemen Data Pegawai & Gaji</h3>
