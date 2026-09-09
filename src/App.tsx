@@ -34,7 +34,7 @@ export default function App() {
           <div>
             <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
               <button onClick={() => setActiveTab('portal')} style={{ padding: '8px 16px', background: activeTab === 'portal' ? '#2563eb' : '#e2e8f0', color: activeTab === 'portal' ? '#fff' : '#475569', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Portal Karyawan</button>
-              <button onClick={() => setActiveTab('payroll')} style={{ padding: '8px 16px', background: activeTab === 'payroll' ? '#2563eb' : '#e2e8f0', color: activeTab === 'payroll' ? '#fff' : '#475569', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Slip Gaji / Payroll</button>
+              <button onClick={() => setActiveTab('payroll')} style={{ padding: '8px 16px', background: activeTab === 'payroll' ? '#2563eb' : '#e2e8f0', color: activeTab === 'payroll' ? '#fff' : '#475569', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Informasi Payroll</button>
             </div>
             {activeTab === 'portal' ? <PortalKaryawan /> : <ModulPayroll />}
           </div>
