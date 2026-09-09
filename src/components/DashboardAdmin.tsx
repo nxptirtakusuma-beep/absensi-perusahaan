@@ -9,19 +9,38 @@ interface Karyawan {
   gaji_pokok?: number;
 }
 
+interface Absen {
+  id: string;
+  nama: string;
+  tanggal: string;
+  jam_masuk: string;
+  jam_pulang: string;
+  status: string;
+  lokasi?: string;
+}
+
 export default function DashboardAdmin() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminUser, setAdminUser] = useState('');
   const [adminPass, setAdminPass] = useState('');
   const [daftarKaryawan, setDaftarKaryawan] = useState<Karyawan[]>([]);
+  const [riwayatAbsen, setRiwayatAbsen] = useState<Absen[]>([]);
 
   useEffect(() => {
-    if (isLoggedIn) fetchKaryawan();
+    if (isLoggedIn) {
+      fetchKaryawan();
+      fetchRiwayatAbsen();
+    }
   }, [isLoggedIn]);
 
   const fetchKaryawan = async () => {
     const { data } = await supabase.from('karyawan').select('*').order('nama');
     if (data) setDaftarKaryawan(data);
+  };
+
+  const fetchRiwayatAbsen = async () => {
+    const { data } = await supabase.from('absensi').select('*').order('created_at', { ascending: false });
+    if (data) setRiwayatAbsen(data);
   };
 
   const handleLoginAdmin = (e: React.FormEvent) => {
@@ -46,10 +65,16 @@ export default function DashboardAdmin() {
 
   const handleUpdateGaji = async (id: string, nama: string) => {
     const nominal = prompt(`Masukkan nominal gaji baru untuk ${nama}:`, '5000000');
-    if (nominal) {
-      const { error } = await supabase.from('karyawan').update({ gaji_pokok: parseInt(nominal) }).eq('id', id);
-      if (error) alert('Gagal memperbarui gaji.');
-      else {
+    if (nominal !== null) {
+      const parsedGaji = parseInt(nominal);
+      if (isNaN(parsedGaji)) {
+        alert('Nominal gaji harus berupa angka.');
+        return;
+      }
+      const { error } = await supabase.from('karyawan').update({ gaji_pokok: parsedGaji }).eq('id', id);
+      if (error) {
+        alert('Gagal memperbarui gaji: ' + error.message);
+      } else {
         alert('Gaji pokok berhasil diperbarui!');
         fetchKaryawan();
       }
@@ -57,14 +82,14 @@ export default function DashboardAdmin() {
   };
 
   const handleExportExcel = () => {
-    let csv = "ID;Nama;Jabatan;Email;Gaji Pokok\n";
-    daftarKaryawan.forEach(k => {
-      csv += `"${k.id}","${k.nama}","${k.jabatan}","${k.email || '-'}","${k.gaji_pokok || 0}"\n`;
+    let csv = "Nama Karyawan;Jabatan;Tanggal;Jam Masuk;Jam Pulang;Status Kehadiran;Lokasi GPS\n";
+    riwayatAbsen.forEach(r => {
+      csv += `"${r.nama}";"-";"${r.tanggal}";"${r.jam_masuk}";"${r.jam_pulang}";"${r.status}";"${r.lokasi || '-'}"\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", "Data_Karyawan_Enterprise.csv");
+    link.setAttribute("download", "Laporan_Absensi_Enterprise.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -97,7 +122,7 @@ export default function DashboardAdmin() {
       </div>
 
       <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-        <button onClick={handleExportExcel} style={{ background: '#059669', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Export Data ke Excel</button>
+        <button onClick={handleExportExcel} style={{ background: '#059669', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Export Laporan Lengkap ke Excel</button>
       </div>
 
       <h3 style={{ fontSize: '15px', color: '#475569', marginBottom: '12px' }}>Manajemen Data Pegawai & Gaji</h3>
