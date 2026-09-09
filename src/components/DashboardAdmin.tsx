@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function DashboardAdmin() {
   return (
     <div style={{ background: '#fff', padding: '24px', borderRadius: '16px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
