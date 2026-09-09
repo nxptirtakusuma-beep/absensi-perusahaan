@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function PortalKaryawan() {
   const [jenisCuti, setJenisCuti] = useState('Cuti Tahunan');
@@ -14,7 +14,7 @@ export default function PortalKaryawan() {
     <div style={{ background: '#fff', padding: '24px', borderRadius: '16px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
       <h2 style={{ color: '#1e293b', fontSize: '20px', marginBottom: '16px' }}>👤 Portal Mandiri Karyawan</h2>
       <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '20px' }}>Gunakan panel ini untuk melakukan absensi harian dan mengajukan cuti/izin[cite: 1].</p>
-
+      
       <form onSubmit={handleAjukanCuti} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px' }}>
         <label style={{ fontSize: '13px', fontWeight: 'bold', color: '#334155' }}>Form Pengajuan Cuti / Izin:</label>
         <select value={jenisCuti} onChange={(e) => setJenisCuti(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
