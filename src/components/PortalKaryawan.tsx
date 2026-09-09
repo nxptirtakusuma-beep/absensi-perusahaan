@@ -12,13 +12,13 @@ interface Karyawan {
 }
 
 export default function PortalKaryawan() {
-  const [subView, setSubView] = useState<'login' | 'daftar' | 'lupa' | 'dashboard_kry' | 'slip_gaji'>('login');
+  const [subView, setSubView] = useState<'login' | 'daftar_kry' | 'daftar_adm' | 'lupa' | 'dashboard_kry' | 'slip_gaji'>('login');
   const [daftarKaryawan, setDaftarKaryawan] = useState<Karyawan[]>([]);
   const [selectedId, setSelectedId] = useState('');
   const [inputPin, setInputPin] = useState('');
   const [karyawanLogin, setKaryawanLogin] = useState<Karyawan | null>(null);
 
-  // Form Pendaftaran
+  // Form Pendaftaran Karyawan / Admin
   const [regId, setRegId] = useState('');
   const [regNama, setRegNama] = useState('');
   const [regJabatan, setRegJabatan] = useState('');
@@ -32,6 +32,7 @@ export default function PortalKaryawan() {
   // Kamera & GPS
   const [lokasiUser, setLokasiUser] = useState('Mendeteksi GPS...');
   const [fotoSnapshot, setFotoSnapshot] = useState<string | null>(null);
+  const [statusAbsen, setStatusAbsen] = useState('Hadir');
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -40,13 +41,13 @@ export default function PortalKaryawan() {
   }, []);
 
   useEffect(() => {
-    if (subView === 'dashboard_kry' && karyawanLogin) {
+    if (karyawanLogin) {
       startCamera();
       ambilGPS();
     } else {
       stopCamera();
     }
-  }, [subView, karyawanLogin]);
+  }, [karyawanLogin]);
 
   const fetchKaryawan = async () => {
     const { data } = await supabase.from('karyawan').select('*').order('nama');
@@ -82,7 +83,7 @@ export default function PortalKaryawan() {
       if (ctx) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         setFotoSnapshot(canvas.toDataURL('image/jpeg'));
-        alert('Foto wajah berhasil diverifikasi!');
+        alert('Verifikasi wajah (Vermuk) berhasil diambil!');
       }
     }
   };
@@ -105,13 +106,12 @@ export default function PortalKaryawan() {
     }
     if (inputPin === (kry.pin || '1234')) {
       setKaryawanLogin(kry);
-      setSubView('dashboard_kry');
     } else {
       alert('PIN atau Password salah!');
     }
   };
 
-  const handleDaftar = async (e: React.FormEvent) => {
+  const handleDaftarKaryawan = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!regId || !regNama || !regJabatan || !regEmail || !regPin) {
       alert('Semua kolom wajib diisi!');
@@ -130,8 +130,29 @@ export default function PortalKaryawan() {
     if (error) {
       alert('Gagal daftar: ' + error.message);
     } else {
-      alert('Registrasi akun berhasil! Silakan login.');
+      alert('Registrasi akun karyawan berhasil! Silakan login.');
       fetchKaryawan();
+      setSubView('login');
+    }
+  };
+
+  const handleDaftarAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!regNama || !regEmail || !regPin) {
+      alert('Semua kolom wajib diisi!');
+      return;
+    }
+    if (!regEmail.includes('@gmail.com')) {
+      alert('Gunakan alamat Gmail yang valid.');
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({ email: regEmail, password: regPin });
+    setLoading(false);
+    if (error) {
+      alert('Gagal daftar Admin: ' + error.message);
+    } else {
+      alert('Akun Admin berhasil didaftarkan! Silakan masuk melalui Dashboard HR.');
       setSubView('login');
     }
   };
@@ -153,6 +174,39 @@ export default function PortalKaryawan() {
     }
   };
 
+  const handleKirimAbsen = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!karyawanLogin) return;
+    if (!fotoSnapshot) {
+      alert('Harap lakukan verifikasi wajah (Vermuk) terlebih dahulu!');
+      return;
+    }
+
+    const now = new Date();
+    const tanggalHariIni = now.toLocaleDateString('id-ID');
+    const jamSekarang = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+    const { error } = await supabase.from('absensi').insert([{
+      karyawan_id: karyawanLogin.id,
+      id_karyawan: karyawanLogin.id_karyawan || '-',
+      nama: karyawanLogin.nama,
+      jabatan: karyawanLogin.jabatan,
+      tanggal: tanggalHariIni,
+      jam_masuk: jamSekarang,
+      jam_pulang: '-',
+      total_jam: '-',
+      status: statusAbsen,
+      lokasi: lokasiUser
+    }]);
+
+    if (error) {
+      alert('Gagal mengirim absensi: ' + error.message);
+    } else {
+      alert(`Absen berhasil dicatat dengan status: ${statusAbsen}!`);
+      setFotoSnapshot(null);
+    }
+  };
+
   const handleDownloadSlip = () => {
     if (!karyawanLogin) return;
     const slipWindow = window.open('', '', 'height=600,width=800');
@@ -169,7 +223,7 @@ export default function PortalKaryawan() {
           <p><b>Email:</b> ${karyawanLogin.email || '-'}</p>
           <hr/>
           <p><b>Gaji Pokok:</b> Rp ${gaji.toLocaleString('id-ID')}</p>
-          <p><b>Tunjangan & Lembur:</b> Rp 500.000</p>
+          <p><b>Tunjangan & Kinerja:</b> Rp 500.000</p>
           <p><b>Total Pendapatan:</b> <span style="color: green; font-weight: bold;">Rp ${(gaji + 500000).toLocaleString('id-ID')}</span></p>
           <br/><br/>
           <p style="text-align: right;">HRD Manager Enterprise</p>
@@ -191,7 +245,7 @@ export default function PortalKaryawan() {
 
   return (
     <div style={{ background: '#fff', padding: '24px', borderRadius: '16px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
-      {subView === 'login' && (
+      {subView === 'login' && !karyawanLogin && (
         <div>
           <h2 style={{ color: '#1e293b', marginBottom: '16px' }}>👤 Login Karyawan</h2>
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
@@ -201,24 +255,38 @@ export default function PortalKaryawan() {
             </select>
             <input type="password" maxLength={6} placeholder="PIN / Password..." value={inputPin} onChange={e => setInputPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <button type="submit" style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Masuk Portal</button>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
-              <span onClick={() => setSubView('daftar')} style={{ color: '#0284c7', cursor: 'pointer', fontWeight: 'bold' }}>Daftar Akun Baru</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginTop: '6px' }}>
+              <span onClick={() => setSubView('daftar_kry')} style={{ color: '#0284c7', cursor: 'pointer', fontWeight: 'bold' }}>Daftar Karyawan</span>
+              <span onClick={() => setSubView('daftar_adm')} style={{ color: '#10b981', cursor: 'pointer', fontWeight: 'bold' }}>Daftar Admin</span>
               <span onClick={() => setSubView('lupa')} style={{ color: '#dc2626', cursor: 'pointer', fontWeight: 'bold' }}>Lupa PIN?</span>
             </div>
           </form>
         </div>
       )}
 
-      {subView === 'daftar' && (
+      {subView === 'daftar_kry' && (
         <div>
-          <h2 style={{ color: '#1e293b', marginBottom: '16px' }}>✍️ Pendaftaran Akun Karyawan</h2>
-          <form onSubmit={handleDaftar} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
+          <h2 style={{ color: '#1e293b', marginBottom: '16px' }}>✍️ Pendaftaran Akun Karyawan Mandiri</h2>
+          <form onSubmit={handleDaftarKaryawan} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
             <input type="text" placeholder="ID Karyawan / NIP..." value={regId} onChange={e => setRegId(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="text" placeholder="Nama Lengkap..." value={regNama} onChange={e => setRegNama(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="text" placeholder="Jabatan..." value={regJabatan} onChange={e => setRegJabatan(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="email" placeholder="Alamat Gmail..." value={regEmail} onChange={e => setRegEmail(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="password" maxLength={6} placeholder="Buat PIN / Password..." value={regPin} onChange={e => setRegPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-            <button type="submit" disabled={loading} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Daftar Sekarang'}</button>
+            <button type="submit" disabled={loading} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Daftar Karyawan'}</button>
+            <span onClick={() => setSubView('login')} style={{ color: '#64748b', cursor: 'pointer', fontSize: '13px' }}>← Kembali ke Login</span>
+          </form>
+        </div>
+      )}
+
+      {subView === 'daftar_adm' && (
+        <div>
+          <h2 style={{ color: '#1e293b', marginBottom: '16px' }}>✍️ Pendaftaran Akun Admin Mandiri</h2>
+          <form onSubmit={handleDaftarAdmin} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
+            <input type="text" placeholder="Nama Lengkap Admin..." value={regNama} onChange={e => setRegNama(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            <input type="email" placeholder="Alamat Gmail Admin..." value={regEmail} onChange={e => setRegEmail(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            <input type="password" placeholder="Password Admin..." value={regPin} onChange={e => setRegPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            <button type="submit" disabled={loading} style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Daftar Admin'}</button>
             <span onClick={() => setSubView('login')} style={{ color: '#64748b', cursor: 'pointer', fontSize: '13px' }}>← Kembali ke Login</span>
           </form>
         </div>
@@ -244,21 +312,31 @@ export default function PortalKaryawan() {
           <p style={{ fontSize: '13px', color: '#64748b' }}>Lokasi GPS: <strong>{lokasiUser}</strong></p>
           
           <div style={{ display: 'flex', gap: '10px', margin: '15px 0' }}>
-            <button onClick={() => setSubView('dashboard_kry')} style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Absensi Wajah</button>
+            <button onClick={() => setSubView('dashboard_kry')} style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Absensi & Vermuk</button>
             <button onClick={() => setSubView('slip_gaji')} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Unduh Slip Gaji</button>
           </div>
 
           {subView === 'dashboard_kry' && (
-            <div>
-              <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', textAlign: 'center', maxWidth: '320px' }}>
-                <p style={{ fontWeight: 'bold', fontSize: '13px', marginBottom: '8px' }}>Verifikasi Wajah Kamera:</p>
+            <form onSubmit={handleKirimAbsen} style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxWidth: '360px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', marginBottom: '6px' }}>Status Kehadiran:</label>
+                <select value={statusAbsen} onChange={e => setStatusAbsen(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                  <option value="Hadir">Hadir</option>
+                  <option value="Terlambat">Terlambat</option>
+                  <option value="Sakit">Sakit</option>
+                  <option value="Izin">Izin</option>
+                </select>
+              </div>
+
+              <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
+                <p style={{ fontWeight: 'bold', fontSize: '13px', marginBottom: '8px' }}>📸 Verifikasi Wajah (Vermuk):</p>
                 <video ref={videoRef} autoPlay playsInline muted style={{ width: '100%', height: '140px', background: '#000', borderRadius: '8px', objectFit: 'cover' }} />
                 {fotoSnapshot && <p style={{ color: '#10b981', fontSize: '12px', fontWeight: 'bold', margin: '6px 0' }}>✔ Wajah Terverifikasi</p>}
-                <button type="button" onClick={ambilFoto} style={{ marginTop: '8px', background: '#0284c7', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>Ambil Foto</button>
+                <button type="button" onClick={ambilFoto} style={{ marginTop: '8px', background: '#0284c7', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>Ambil Foto Vermuk</button>
               </div>
               <canvas ref={canvasRef} style={{ display: 'none' }} />
-              <button onClick={() => alert('Absensi berhasil dicatat!')} style={{ marginTop: '16px', background: '#2563eb', color: '#fff', border: 'none', padding: '12px 24px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Kirim Absen Sekarang</button>
-            </div>
+              <button type="submit" style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Kirim Absen Sekarang</button>
+            </form>
           )}
 
           {subView === 'slip_gaji' && (
