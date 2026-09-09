@@ -3,7 +3,7 @@ interface NavbarProps {
   onNavClick: (view: 'landing' | 'portal' | 'admin') => void;
 }
 
-export default function Navbar({ namaPerusahaan, onNavClick }: NavbarProps) {
+export default function Navbar({ onNavClick }: NavbarProps) {
   return (
     <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 40px', borderBottom: '1px solid #e2e8f0', background: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(8px)', position: 'sticky', top: 0, zIndex: 100, color: '#fff' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => onNavClick('landing')}>
