@@ -33,7 +33,7 @@ interface PengaturanKantor {
 }
 
 export default function App() {
-  const [role, setRole] = useState<'pilih' | 'karyawan' | 'daftar_karyawan' | 'lupa_password' | 'admin'>('pilih');
+  const [role, setRole] = useState<'landing' | 'pilih' | 'karyawan' | 'daftar_karyawan' | 'lupa_password' | 'admin'>('landing');
   const [adminPassword, setAdminPassword] = useState('');
   const [activeTab, setActiveTab] = useState<'absen' | 'karyawan' | 'riwayat' | 'pengaturan'>('absen');
 
@@ -44,7 +44,7 @@ export default function App() {
   // Pengaturan Kantor Dinamis dari Database
   const [kantorConfig, setKantorConfig] = useState<PengaturanKantor>({
     id: '',
-    nama_perusahaan: 'PT. Perusahaan Enterprise Indonesia',
+    nama_perusahaan: 'Talenta Enterprise HCM',
     latitude: -6.1751,
     longitude: 106.8650,
     radius_meter: 200
@@ -548,304 +548,401 @@ export default function App() {
   return (
     <div style={{ 
       minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #93c5fd 100%)', 
-      padding: '40px 20px', 
+      background: role === 'landing' ? 'linear-gradient(135deg, #fff5f5 0%, #fff 50%, #fdf2f8 100%)' : 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #93c5fd 100%)', 
+      padding: role === 'landing' ? '0' : '40px 20px', 
       fontFamily: 'Inter, system-ui, sans-serif',
       display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
+      flexDirection: 'column',
+      justifyContent: role === 'landing' ? 'flex-start' : 'center',
+      alignItems: 'center',
+      transition: 'all 0.3s ease'
     }}>
-      <div style={{ 
-        width: '100%',
-        maxWidth: '1000px', 
-        background: 'rgba(255, 255, 255, 0.96)', 
-        backdropFilter: 'blur(10px)',
-        padding: '32px', 
-        borderRadius: '20px', 
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)' 
-      }}>
-        
-        {role === 'pilih' && (
-          <div style={{ textAlign: 'center', padding: '30px 10px' }}>
-            <div style={{ fontSize: '48px', marginBottom: '10px' }}>🏢📍</div>
-            <h1 style={{ color: '#1e293b', marginBottom: '8px', fontSize: '28px', fontWeight: '800' }}>{kantorConfig.nama_perusahaan}</h1>
-            <p style={{ color: '#64748b', marginBottom: '36px', fontSize: '15px' }}>Sistem Absensi Enterprise dengan Pengaturan Koordinat GPS Kustom</p>
+
+      {/* LANDING PAGE GAYA MEKARI TALENTA */}
+      {role === 'landing' && (
+        <div style={{ width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+          
+          {/* Navbar Professional */}
+          <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 40px', borderBottom: '1px solid #f3f4f6', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', position: 'sticky', top: 0, zIndex: 100 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '24px', background: '#ef4444', color: '#fff', padding: '4px 10px', borderRadius: '8px', fontWeight: '900' }}>⚡</span>
+              <span style={{ fontSize: '20px', fontWeight: '800', color: '#1e293b', letterSpacing: '-0.5px' }}>mekari <span style={{ color: '#ef4444' }}>talenta</span></span>
+            </div>
             
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap' }}>
-              <button 
-                onClick={() => setRole('karyawan')}
-                style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', color: 'white', padding: '16px 28px', borderRadius: '12px', border: 'none', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)' }}
-              >
-                👤 Login Karyawan
-              </button>
+            <nav style={{ display: 'flex', gap: '24px', alignItems: 'center', fontSize: '14px', fontWeight: '600', color: '#4b5563' }}>
+              <span style={{ cursor: 'pointer' }}>Fitur ▾</span>
+              <span style={{ cursor: 'pointer' }}>Solusi ▾</span>
+              <span style={{ cursor: 'pointer' }}>Harga</span>
+              <span style={{ cursor: 'pointer' }}>Resources ▾</span>
+            </nav>
 
-              <button 
-                onClick={() => setRole('daftar_karyawan')}
-                style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', color: 'white', padding: '16px 28px', borderRadius: '12px', border: 'none', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)' }}
-              >
-                ✍️ Daftar Akun Karyawan Baru
-              </button>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <span style={{ fontSize: '13px', fontWeight: '600', color: '#374151', cursor: 'pointer' }}>🌐 ID ▾</span>
+              <span onClick={() => setRole('pilih')} style={{ fontSize: '13px', fontWeight: '600', color: '#374151', cursor: 'pointer', padding: '8px 12px' }}>Sign In</span>
+              <button onClick={() => alert('Hubungi Sales via WhatsApp: +62 812-3456-7890')} style={{ background: '#1f2937', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer' }}>Hubungi sales</button>
+              <button onClick={() => setRole('pilih')} style={{ background: '#fff', color: '#1f2937', border: '1px solid #d1d5db', padding: '10px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer' }}>Coba gratis</button>
+            </div>
+          </header>
+
+          {/* Hero Section */}
+          <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '60px 80px', maxWidth: '1280px', margin: '0 auto', width: '100%', gap: '40px', flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: '320px', maxWidth: '600px' }}>
+              <div style={{ display: 'inline-block', background: '#fee2e2', color: '#dc2626', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', marginBottom: '20px' }}>
+                #1 Software HR di Indonesia
+              </div>
+              <h1 style={{ fontSize: '42px', fontWeight: '900', color: '#111827', lineHeight: '1.2', marginBottom: '20px', letterSpacing: '-1px' }}>
+                AI-centric HCM untuk HR proaktif dan produktivitas tinggi
+              </h1>
               
-              <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'left', minWidth: '260px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                <form onSubmit={handleLoginAdmin} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontWeight: 'bold', fontSize: '13px', color: '#334155' }}>🔐 Portal Admin:</label>
-                  <input 
-                    type="password" 
-                    placeholder="Password Admin..." 
-                    value={adminPassword}
-                    onChange={(e) => setAdminPassword(e.target.value)}
-                    style={{ padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '13px', outline: 'none' }}
-                  />
-                  <button type="submit" style={{ background: '#10b981', color: 'white', padding: '8px', borderRadius: '6px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>
-                    Login Admin
-                  </button>
-                </form>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '36px', fontSize: '15px', color: '#4b5563', fontWeight: '500' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ color: '#10b981', fontWeight: 'bold' }}>✔</span> Dukungan AI untuk keputusan strategis yang lebih cepat
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ color: '#10b981', fontWeight: 'bold' }}>✔</span> Kurangi beban kerja administratif HR hingga 90%
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ color: '#10b981', fontWeight: 'bold' }}>✔</span> Patuh regulasi Indonesia, siap untuk operasional skala besar
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button onClick={() => setRole('pilih')} style={{ background: '#1f2937', color: '#fff', border: 'none', padding: '14px 24px', borderRadius: '10px', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
+                  💬 WhatsApp sales
+                </button>
+                <button onClick={() => setRole('pilih')} style={{ background: '#fff', color: '#1f2937', border: '1px solid #d1d5db', padding: '14px 24px', borderRadius: '10px', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer' }}>
+                  Coba gratis
+                </button>
+              </div>
+
+              {/* Rating Section */}
+              <div style={{ display: 'flex', gap: '16px', marginTop: '40px', flexWrap: 'wrap' }}>
+                <div style={{ background: '#fff', padding: '10px 16px', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>⭐ G2</span> <span style={{ color: '#f59e0b' }}>★ 4.8</span>
+                </div>
+                <div style={{ background: '#fff', padding: '10px 16px', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>🛡 Capterra</span> <span style={{ color: '#f59e0b' }}>★ 4.7</span>
+                </div>
+                <div style={{ background: '#fff', padding: '10px 16px', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>🔷 GetApp</span> <span style={{ color: '#f59e0b' }}>★ 4.7</span>
+                </div>
               </div>
             </div>
-          </div>
-        )}
 
-        {role === 'daftar_karyawan' && (
-          <div style={{ padding: '10px 10px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid #f1f5f9', paddingBottom: '12px' }}>
-              <h2 style={{ margin: 0, color: '#1e293b', fontSize: '20px', fontWeight: '700' }}>Pendaftaran Akun Karyawan Mandiri</h2>
-              <button onClick={() => setRole('pilih')} style={{ background: '#64748b', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>← Kembali</button>
+            {/* Ilustrasi Card Profesional */}
+            <div style={{ flex: 1, minWidth: '300px', display: 'flex', justifyContent: 'center', position: 'relative' }}>
+              <div style={{ background: 'linear-gradient(135deg, #fee2e2 0%, #fef3c7 100%)', padding: '40px', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)', textAlign: 'center', width: '100%', maxWidth: '420px', border: '2px solid rgba(255,255,255,0.8)' }}>
+                <div style={{ fontSize: '64px', marginBottom: '16px' }}>👨‍💼📊</div>
+                <h3 style={{ fontSize: '20px', color: '#1f2937', fontWeight: '800', marginBottom: '8px' }}>Enterprise HR Dashboard</h3>
+                <p style={{ fontSize: '13px', color: '#4b5563', marginBottom: '24px' }}>Akses portal absensi mandiri, pelacakan GPS, rekapitulasi otomatis, dan manajemen talenta perusahaan.</p>
+                <button onClick={() => setRole('pilih')} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '12px 28px', borderRadius: '10px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', width: '100%', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' }}>
+                  Buka Portal Sistem Sekarang →
+                </button>
+              </div>
             </div>
-            <form onSubmit={handlePendaftaranMandiri} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <input type="text" placeholder="ID Karyawan / NIP..." value={regIdKaryawan} onChange={(e) => setRegIdKaryawan(e.target.value)} style={{ padding: '11px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
-                <input type="password" maxLength={6} placeholder="PIN Rahasia..." value={regPin} onChange={(e) => setRegPin(e.target.value)} style={{ padding: '11px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
-              </div>
-              <input type="text" placeholder="Nama Lengkap Karyawan..." value={regNama} onChange={(e) => setRegNama(e.target.value)} style={{ padding: '11px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
-              <input type="text" placeholder="Jabatan / Divisi..." value={regJabatan} onChange={(e) => setRegJabatan(e.target.value)} style={{ padding: '11px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
-              <input type="email" placeholder="Alamat Email Gmail..." value={regEmail} onChange={(e) => setRegEmail(e.target.value)} style={{ padding: '11px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
-              <button type="submit" disabled={loading} style={{ background: '#0284c7', color: 'white', padding: '13px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px' }}>{loading ? 'Mendaftarkan...' : 'Daftar Akun'}</button>
-            </form>
-          </div>
-        )}
+          </main>
+        </div>
+      )}
 
-        {role === 'karyawan' && !karyawanLogin && (
-          <div style={{ textAlign: 'center', padding: '30px 20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0, color: '#1e293b', fontSize: '20px' }}>Login Karyawan</h2>
-              <button onClick={() => setRole('pilih')} style={{ background: '#64748b', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>← Kembali</button>
+      {/* CONTAINER UTAMA APLIKASI ABSENSI (SAAT MASUK PORTAL) */}
+      {role !== 'landing' && (
+        <div style={{ 
+          width: '100%',
+          maxWidth: '1000px', 
+          background: 'rgba(255, 255, 255, 0.96)', 
+          backdropFilter: 'blur(10px)',
+          padding: '32px', 
+          borderRadius: '20px', 
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)' 
+        }}>
+          
+          {role === 'pilih' && (
+            <div style={{ textAlign: 'center', padding: '30px 10px' }}>
+              <div style={{ fontSize: '48px', marginBottom: '10px' }}>🏢📍</div>
+              <h1 style={{ color: '#1e293b', marginBottom: '8px', fontSize: '28px', fontWeight: '800' }}>{kantorConfig.nama_perusahaan}</h1>
+              <p style={{ color: '#64748b', marginBottom: '36px', fontSize: '15px' }}>Sistem Absensi Enterprise dengan Pengaturan Koordinat GPS Kustom</p>
+              
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap' }}>
+                <button 
+                  onClick={() => setRole('karyawan')}
+                  style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', color: 'white', padding: '16px 28px', borderRadius: '12px', border: 'none', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)' }}
+                >
+                  👤 Login Karyawan
+                </button>
+
+                <button 
+                  onClick={() => setRole('daftar_karyawan')}
+                  style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', color: 'white', padding: '16px 28px', borderRadius: '12px', border: 'none', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)' }}
+                >
+                  ✍️ Daftar Akun Karyawan Baru
+                </button>
+                
+                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'left', minWidth: '260px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+                  <form onSubmit={handleLoginAdmin} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label style={{ fontWeight: 'bold', fontSize: '13px', color: '#334155' }}>🔐 Portal Admin:</label>
+                    <input 
+                      type="password" 
+                      placeholder="Password Admin..." 
+                      value={adminPassword}
+                      onChange={(e) => setAdminPassword(e.target.value)}
+                      style={{ padding: '8px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '13px', outline: 'none' }}
+                    />
+                    <button type="submit" style={{ background: '#10b981', color: 'white', padding: '8px', borderRadius: '6px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>
+                      Login Admin
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '30px' }}>
+                <button onClick={() => setRole('landing')} style={{ background: 'none', border: 'none', color: '#ef4444', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px' }}>← Kembali ke Beranda Talenta</button>
+              </div>
             </div>
-            <form onSubmit={handleLoginKaryawan} style={{ maxWidth: '380px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'left' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Pilih Nama:</label>
-                <select value={selectedKaryawanId} onChange={(e) => setSelectedKaryawanId(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px', background: '#fff' }}>
-                  <option value="">-- Pilih Nama Karyawan --</option>
-                  {daftarKaryawan.map(k => <option key={k.id} value={k.id}>{k.nama} — {k.jabatan}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Masukkan PIN:</label>
-                <input type="password" maxLength={6} placeholder="PIN Anda..." value={inputPin} onChange={(e) => setInputPin(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', letterSpacing: '3px' }} />
-              </div>
-              <button type="submit" style={{ background: '#2563eb', color: 'white', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px' }}>Masuk Absensi</button>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginTop: '8px' }}>
-                <span onClick={() => setRole('lupa_password')} style={{ color: '#0284c7', cursor: 'pointer', fontWeight: 'bold' }}>Lupa PIN?</span>
-                <span onClick={() => setRole('daftar_karyawan')} style={{ color: '#2563eb', cursor: 'pointer', fontWeight: 'bold' }}>Daftar Akun Baru</span>
-              </div>
-            </form>
-          </div>
-        )}
+          )}
 
-        {role === 'lupa_password' && (
-          <div style={{ padding: '20px 10px', textAlign: 'center' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid #f1f5f9', paddingBottom: '12px' }}>
-              <h2 style={{ margin: 0, color: '#1e293b', fontSize: '20px', fontWeight: '700' }}>Pemulihan PIN</h2>
-              <button onClick={() => setRole('karyawan')} style={{ background: '#64748b', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>← Kembali</button>
+          {role === 'daftar_karyawan' && (
+            <div style={{ padding: '10px 10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid #f1f5f9', paddingBottom: '12px' }}>
+                <h2 style={{ margin: 0, color: '#1e293b', fontSize: '20px', fontWeight: '700' }}>Pendaftaran Akun Karyawan Mandiri</h2>
+                <button onClick={() => setRole('pilih')} style={{ background: '#64748b', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>← Kembali</button>
+              </div>
+              <form onSubmit={handlePendaftaranMandiri} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <input type="text" placeholder="ID Karyawan / NIP..." value={regIdKaryawan} onChange={(e) => setRegIdKaryawan(e.target.value)} style={{ padding: '11px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
+                  <input type="password" maxLength={6} placeholder="PIN Rahasia..." value={regPin} onChange={(e) => setRegPin(e.target.value)} style={{ padding: '11px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
+                </div>
+                <input type="text" placeholder="Nama Lengkap Karyawan..." value={regNama} onChange={(e) => setRegNama(e.target.value)} style={{ padding: '11px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
+                <input type="text" placeholder="Jabatan / Divisi..." value={regJabatan} onChange={(e) => setRegJabatan(e.target.value)} style={{ padding: '11px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
+                <input type="email" placeholder="Alamat Email Gmail..." value={regEmail} onChange={(e) => setRegEmail(e.target.value)} style={{ padding: '11px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
+                <button type="submit" disabled={loading} style={{ background: '#0284c7', color: 'white', padding: '13px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px' }}>{loading ? 'Mendaftarkan...' : 'Daftar Akun'}</button>
+              </form>
             </div>
-            <form onSubmit={handleKirimOTPGmail} style={{ maxWidth: '360px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'left' }}>
-              <input type="email" placeholder="Masukkan Email Gmail..." value={lupaEmail} onChange={(e) => setLupaEmail(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
-              <button type="submit" disabled={loading} style={{ background: '#0284c7', color: 'white', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px' }}>Kirim Pemulihan</button>
-            </form>
-          </div>
-        )}
+          )}
 
-        {role === 'karyawan' && karyawanLogin && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '2px solid #f1f5f9', paddingBottom: '16px' }}>
-              <div>
-                <h2 style={{ margin: 0, color: '#1e293b', fontSize: '22px', fontWeight: '700' }}>Halo, {karyawanLogin.nama}</h2>
-                <p style={{ margin: '4px 0 0 0', color: '#64748b', fontSize: '13px' }}>Lokasi: <strong style={{ color: '#0284c7' }}>{lokasiUser}</strong></p>
-                {jarakKantorMeter !== null && (
-                  <p style={{ margin: '2px 0 0 0', fontSize: '12px', fontWeight: 'bold', color: jarakKantorMeter <= kantorConfig.radius_meter ? '#16a34a' : '#dc2626' }}>
-                    {jarakKantorMeter <= kantorConfig.radius_meter ? `✔ Dalam Radius Kantor (±${jarakKantorMeter}m)` : `❌ Di Luar Radius (±${jarakKantorMeter}m > ${kantorConfig.radius_meter}m)`}
-                  </p>
-                )}
+          {role === 'karyawan' && !karyawanLogin && (
+            <div style={{ textAlign: 'center', padding: '30px 20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h2 style={{ margin: 0, color: '#1e293b', fontSize: '20px' }}>Login Karyawan</h2>
+                <button onClick={() => setRole('pilih')} style={{ background: '#64748b', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>← Kembali</button>
               </div>
-              <button onClick={() => { setKaryawanLogin(null); setSelectedKaryawanId(''); setInputPin(''); }} style={{ background: '#64748b', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '13px' }}>Ganti Akun</button>
+              <form onSubmit={handleLoginKaryawan} style={{ maxWidth: '380px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'left' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Pilih Nama:</label>
+                  <select value={selectedKaryawanId} onChange={(e) => setSelectedKaryawanId(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px', background: '#fff' }}>
+                    <option value="">-- Pilih Nama Karyawan --</option>
+                    {daftarKaryawan.map(k => <option key={k.id} value={k.id}>{k.nama} — {k.jabatan}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Masukkan PIN:</label>
+                  <input type="password" maxLength={6} placeholder="PIN Anda..." value={inputPin} onChange={(e) => setInputPin(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', letterSpacing: '3px' }} />
+                </div>
+                <button type="submit" style={{ background: '#2563eb', color: 'white', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px' }}>Masuk Absensi</button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginTop: '8px' }}>
+                  <span onClick={() => setRole('lupa_password')} style={{ color: '#0284c7', cursor: 'pointer', fontWeight: 'bold' }}>Lupa PIN?</span>
+                  <span onClick={() => setRole('daftar_karyawan')} style={{ color: '#2563eb', cursor: 'pointer', fontWeight: 'bold' }}>Daftar Akun Baru</span>
+                </div>
+              </form>
             </div>
+          )}
 
-            <form onSubmit={handleKirimAbsen} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: '#334155' }}>📸 Verifikasi Wajah:</label>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <video ref={videoRef} autoPlay playsInline muted style={{ width: '220px', height: '165px', borderRadius: '8px', background: '#000', objectFit: 'cover' }} />
-                  {fotoSnapshot ? (
-                    <div>
-                      <img src={fotoSnapshot} alt="Snapshot" style={{ width: '220px', height: '165px', borderRadius: '8px', objectFit: 'cover', border: '2px solid #10b981' }} />
-                      <p style={{ fontSize: '11px', color: '#10b981', fontWeight: 'bold', margin: '4px 0 0 0' }}>✔ Terverifikasi</p>
+          {role === 'lupa_password' && (
+            <div style={{ padding: '20px 10px', textAlign: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid #f1f5f9', paddingBottom: '12px' }}>
+                <h2 style={{ margin: 0, color: '#1e293b', fontSize: '20px', fontWeight: '700' }}>Pemulihan PIN</h2>
+                <button onClick={() => setRole('karyawan')} style={{ background: '#64748b', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>← Kembali</button>
+              </div>
+              <form onSubmit={handleKirimOTPGmail} style={{ maxWidth: '360px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'left' }}>
+                <input type="email" placeholder="Masukkan Email Gmail..." value={lupaEmail} onChange={(e) => setLupaEmail(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
+                <button type="submit" disabled={loading} style={{ background: '#0284c7', color: 'white', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px' }}>Kirim Pemulihan</button>
+              </form>
+            </div>
+          )}
+
+          {role === 'karyawan' && karyawanLogin && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '2px solid #f1f5f9', paddingBottom: '16px' }}>
+                <div>
+                  <h2 style={{ margin: 0, color: '#1e293b', fontSize: '22px', fontWeight: '700' }}>Halo, {karyawanLogin.nama}</h2>
+                  <p style={{ margin: '4px 0 0 0', color: '#64748b', fontSize: '13px' }}>Lokasi: <strong style={{ color: '#0284c7' }}>{lokasiUser}</strong></p>
+                  {jarakKantorMeter !== null && (
+                    <p style={{ margin: '2px 0 0 0', fontSize: '12px', fontWeight: 'bold', color: jarakKantorMeter <= kantorConfig.radius_meter ? '#16a34a' : '#dc2626' }}>
+                      {jarakKantorMeter <= kantorConfig.radius_meter ? `✔ Dalam Radius Kantor (±${jarakKantorMeter}m)` : `❌ Di Luar Radius (±${jarakKantorMeter}m > ${kantorConfig.radius_meter}m)`}
+                    </p>
+                  )}
+                </div>
+                <button onClick={() => { setKaryawanLogin(null); setSelectedKaryawanId(''); setInputPin(''); }} style={{ background: '#64748b', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '13px' }}>Ganti Akun</button>
+              </div>
+
+              <form onSubmit={handleKirimAbsen} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: '#334155' }}>📸 Verifikasi Wajah:</label>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <video ref={videoRef} autoPlay playsInline muted style={{ width: '220px', height: '165px', borderRadius: '8px', background: '#000', objectFit: 'cover' }} />
+                    {fotoSnapshot ? (
+                      <div>
+                        <img src={fotoSnapshot} alt="Snapshot" style={{ width: '220px', height: '165px', borderRadius: '8px', objectFit: 'cover', border: '2px solid #10b981' }} />
+                        <p style={{ fontSize: '11px', color: '#10b981', fontWeight: 'bold', margin: '4px 0 0 0' }}>✔ Terverifikasi</p>
+                      </div>
+                    ) : (
+                      <div style={{ width: '220px', height: '165px', borderRadius: '8px', border: '2px dashed #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
+                        <span style={{ fontSize: '12px', color: '#94a3b8' }}>Belum Ambil Foto</span>
+                      </div>
+                    )}
+                  </div>
+                  <button type="button" onClick={ambilFoto} style={{ marginTop: '12px', background: '#0284c7', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Ambil Foto Wajah</button>
+                </div>
+                <canvas ref={canvasRef} style={{ display: 'none' }} />
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#334155' }}>Kategori:</label>
+                    <select value={jenisAbsen} onChange={(e) => setJenisAbsen(e.target.value as 'Masuk' | 'Pulang')} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', background: '#fff' }}>
+                      <option value="Masuk">🟢 Absen Masuk</option>
+                      <option value="Pulang">🔴 Absen Pulang</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#334155' }}>Status:</label>
+                    <select value={statusAbsen} onChange={(e) => setStatusAbsen(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', background: '#fff' }}>
+                      <option value="Hadir">Hadir</option>
+                      <option value="Izin">Izin</option>
+                      <option value="Sakit">Sakit</option>
+                      <option value="Cuti">Cuti</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" disabled={loading} style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', color: 'white', padding: '14px', borderRadius: '10px', border: 'none', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Kirim Absen Sekarang'}</button>
+              </form>
+            </div>
+          )}
+
+          {role === 'admin' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '2px solid #f1f5f9', paddingBottom: '16px' }}>
+                <div>
+                  <h2 style={{ margin: 0, color: '#1e293b', fontSize: '22px', fontWeight: '700' }}>Dashboard Admin Enterprise</h2>
+                  <span style={{ color: '#10b981', fontSize: '13px', fontWeight: 'bold' }}>● Perusahaan: {kantorConfig.nama_perusahaan}</span>
+                </div>
+                <button onClick={() => setRole('pilih')} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px' }}>Logout Admin</button>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+                <button onClick={() => setActiveTab('riwayat')} style={{ padding: '10px 18px', background: activeTab === 'riwayat' ? '#2563eb' : '#f1f5f9', color: activeTab === 'riwayat' ? 'white' : '#475569', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>📊 Rekap Kehadiran</button>
+                <button onClick={() => setActiveTab('karyawan')} style={{ padding: '10px 18px', background: activeTab === 'karyawan' ? '#2563eb' : '#f1f5f9', color: activeTab === 'karyawan' ? 'white' : '#475569', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>👥 Kelola Karyawan</button>
+                <button onClick={() => setActiveTab('pengaturan')} style={{ padding: '10px 18px', background: activeTab === 'pengaturan' ? '#2563eb' : '#f1f5f9', color: activeTab === 'pengaturan' ? 'white' : '#475569', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>⚙️ Pengaturan Kantor & GPS</button>
+              </div>
+
+              {activeTab === 'riwayat' && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', flex: 1 }}>
+                      <input type="text" placeholder="🔍 Cari Nama..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', minWidth: '180px' }} />
+                      <input type="text" placeholder="📅 Filter Tanggal..." value={filterTanggal} onChange={(e) => setFilterTanggal(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', minWidth: '140px' }} />
                     </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {filteredAbsen.length > 0 && (
+                        <>
+                          <button onClick={exportToExcel} style={{ backgroundColor: '#10b981', color: 'white', padding: '8px 12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Excel</button>
+                          <button onClick={handleCetakPDF} style={{ backgroundColor: '#0284c7', color: 'white', padding: '8px 12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>PDF Resmi</button>
+                        </>
+                      )}
+                      <button onClick={handleResetRiwayat} style={{ backgroundColor: '#ef4444', color: 'white', padding: '8px 12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Reset</button>
+                    </div>
+                  </div>
+
+                  {filteredAbsen.length === 0 ? (
+                    <p style={{ color: '#94a3b8', textAlign: 'center', padding: '40px' }}>Tidak ada data absensi.</p>
                   ) : (
-                    <div style={{ width: '220px', height: '165px', borderRadius: '8px', border: '2px dashed #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
-                      <span style={{ fontSize: '12px', color: '#94a3b8' }}>Belum Ambil Foto</span>
+                    <div style={{ overflowX: 'auto', maxHeight: '400px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                        <thead>
+                          <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', position: 'sticky', top: 0, color: '#475569' }}>
+                            <th style={{ padding: '12px' }}>ID</th>
+                            <th style={{ padding: '12px' }}>Tanggal</th>
+                            <th style={{ padding: '12px' }}>Nama</th>
+                            <th style={{ padding: '12px' }}>Jabatan</th>
+                            <th style={{ padding: '12px' }}>Masuk</th>
+                            <th style={{ padding: '12px' }}>Pulang</th>
+                            <th style={{ padding: '12px' }}>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredAbsen.map((item) => (
+                            <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                              <td style={{ padding: '12px', fontWeight: 'bold' }}>{item.id_karyawan || '-'}</td>
+                              <td style={{ padding: '12px', color: '#64748b' }}>{item.tanggal}</td>
+                              <td style={{ padding: '12px', fontWeight: 'bold' }}>{item.nama}</td>
+                              <td style={{ padding: '12px', color: '#64748b' }}>{item.jabatan}</td>
+                              <td style={{ padding: '12px', color: '#2563eb', fontWeight: 'bold' }}>{item.jam_masuk}</td>
+                              <td style={{ padding: '12px', color: '#9333ea', fontWeight: 'bold' }}>{item.jam_pulang}</td>
+                              <td style={{ padding: '12px' }}>
+                                <span style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', backgroundColor: item.status.includes('Terlambat') ? '#fee2e2' : '#dcfce7', color: item.status.includes('Terlambat') ? '#991b1b' : '#166534' }}>{item.status}</span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   )}
                 </div>
-                <button type="button" onClick={ambilFoto} style={{ marginTop: '12px', background: '#0284c7', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Ambil Foto Wajah</button>
-              </div>
-              <canvas ref={canvasRef} style={{ display: 'none' }} />
+              )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              {activeTab === 'karyawan' && (
                 <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#334155' }}>Kategori:</label>
-                  <select value={jenisAbsen} onChange={(e) => setJenisAbsen(e.target.value as 'Masuk' | 'Pulang')} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', background: '#fff' }}>
-                    <option value="Masuk">🟢 Absen Masuk</option>
-                    <option value="Pulang">🔴 Absen Pulang</option>
-                  </select>
+                  <h3 style={{ fontSize: '16px', color: '#334155', marginBottom: '12px' }}>Daftar Karyawan ({daftarKaryawan.length})</h3>
+                  <div style={{ maxHeight: '350px', overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '4px' }}>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                      {daftarKaryawan.map(k => (
+                        <li key={k.id} style={{ padding: '10px 14px', background: '#fff', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <strong style={{ color: '#1e293b' }}>{k.nama}</strong> ({k.jabatan}) — <span style={{ color: '#0284c7' }}>{k.email || 'Tanpa Email'}</span>
+                          </div>
+                          <button onClick={() => handleHapusKaryawan(k.id, k.nama)} style={{ background: '#fee2e2', color: '#991b1b', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}>Hapus</button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
+              )}
+
+              {activeTab === 'pengaturan' && (
                 <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#334155' }}>Status:</label>
-                  <select value={statusAbsen} onChange={(e) => setStatusAbsen(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', background: '#fff' }}>
-                    <option value="Hadir">Hadir</option>
-                    <option value="Izin">Izin</option>
-                    <option value="Sakit">Sakit</option>
-                    <option value="Cuti">Cuti</option>
-                  </select>
-                </div>
-              </div>
-              <button type="submit" disabled={loading} style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', color: 'white', padding: '14px', borderRadius: '10px', border: 'none', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Kirim Absen Sekarang'}</button>
-            </form>
-          </div>
-        )}
+                  <h3 style={{ fontSize: '16px', color: '#334155', marginBottom: '12px' }}>⚙️ Pengaturan Titik Koordinat Kantor & Geofencing</h3>
+                  <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '20px' }}>Admin dapat menentukan titik pusat koordinat GPS kantor dan batas radius toleransi absensi secara mandiri.</p>
 
-        {role === 'admin' && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '2px solid #f1f5f9', paddingBottom: '16px' }}>
-              <div>
-                <h2 style={{ margin: 0, color: '#1e293b', fontSize: '22px', fontWeight: '700' }}>Dashboard Admin Enterprise</h2>
-                <span style={{ color: '#10b981', fontSize: '13px', fontWeight: 'bold' }}>● Perusahaan: {kantorConfig.nama_perusahaan}</span>
-              </div>
-              <button onClick={() => setRole('pilih')} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px' }}>Logout Admin</button>
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
-              <button onClick={() => setActiveTab('riwayat')} style={{ padding: '10px 18px', background: activeTab === 'riwayat' ? '#2563eb' : '#f1f5f9', color: activeTab === 'riwayat' ? 'white' : '#475569', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>📊 Rekap Kehadiran</button>
-              <button onClick={() => setActiveTab('karyawan')} style={{ padding: '10px 18px', background: activeTab === 'karyawan' ? '#2563eb' : '#f1f5f9', color: activeTab === 'karyawan' ? 'white' : '#475569', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>👥 Kelola Karyawan</button>
-              <button onClick={() => setActiveTab('pengaturan')} style={{ padding: '10px 18px', background: activeTab === 'pengaturan' ? '#2563eb' : '#f1f5f9', color: activeTab === 'pengaturan' ? 'white' : '#475569', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>⚙️ Pengaturan Kantor & GPS</button>
-            </div>
-
-            {activeTab === 'riwayat' && (
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
-                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', flex: 1 }}>
-                    <input type="text" placeholder="🔍 Cari Nama..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', minWidth: '180px' }} />
-                    <input type="text" placeholder="📅 Filter Tanggal..." value={filterTanggal} onChange={(e) => setFilterTanggal(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', minWidth: '140px' }} />
-                  </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    {filteredAbsen.length > 0 && (
-                      <>
-                        <button onClick={exportToExcel} style={{ backgroundColor: '#10b981', color: 'white', padding: '8px 12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Excel</button>
-                        <button onClick={handleCetakPDF} style={{ backgroundColor: '#0284c7', color: 'white', padding: '8px 12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>PDF Resmi</button>
-                      </>
-                    )}
-                    <button onClick={handleResetRiwayat} style={{ backgroundColor: '#ef4444', color: 'white', padding: '8px 12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>Reset</button>
-                  </div>
-                </div>
-
-                {filteredAbsen.length === 0 ? (
-                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '40px' }}>Tidak ada data absensi.</p>
-                ) : (
-                  <div style={{ overflowX: 'auto', maxHeight: '400px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
-                      <thead>
-                        <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', position: 'sticky', top: 0, color: '#475569' }}>
-                          <th style={{ padding: '12px' }}>ID</th>
-                          <th style={{ padding: '12px' }}>Tanggal</th>
-                          <th style={{ padding: '12px' }}>Nama</th>
-                          <th style={{ padding: '12px' }}>Jabatan</th>
-                          <th style={{ padding: '12px' }}>Masuk</th>
-                          <th style={{ padding: '12px' }}>Pulang</th>
-                          <th style={{ padding: '12px' }}>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredAbsen.map((item) => (
-                          <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                            <td style={{ padding: '12px', fontWeight: 'bold' }}>{item.id_karyawan || '-'}</td>
-                            <td style={{ padding: '12px', color: '#64748b' }}>{item.tanggal}</td>
-                            <td style={{ padding: '12px', fontWeight: 'bold' }}>{item.nama}</td>
-                            <td style={{ padding: '12px', color: '#64748b' }}>{item.jabatan}</td>
-                            <td style={{ padding: '12px', color: '#2563eb', fontWeight: 'bold' }}>{item.jam_masuk}</td>
-                            <td style={{ padding: '12px', color: '#9333ea', fontWeight: 'bold' }}>{item.jam_pulang}</td>
-                            <td style={{ padding: '12px' }}>
-                              <span style={{ padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', backgroundColor: item.status.includes('Terlambat') ? '#fee2e2' : '#dcfce7', color: item.status.includes('Terlambat') ? '#991b1b' : '#166534' }}>{item.status}</span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'karyawan' && (
-              <div>
-                <h3 style={{ fontSize: '16px', color: '#334155', marginBottom: '12px' }}>Daftar Karyawan ({daftarKaryawan.length})</h3>
-                <div style={{ maxHeight: '350px', overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '4px' }}>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {daftarKaryawan.map(k => (
-                      <li key={k.id} style={{ padding: '10px 14px', background: '#fff', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div>
-                          <strong style={{ color: '#1e293b' }}>{k.nama}</strong> ({k.jabatan}) — <span style={{ color: '#0284c7' }}>{k.email || 'Tanpa Email'}</span>
-                        </div>
-                        <button onClick={() => handleHapusKaryawan(k.id, k.nama)} style={{ background: '#fee2e2', color: '#991b1b', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}>Hapus</button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'pengaturan' && (
-              <div>
-                <h3 style={{ fontSize: '16px', color: '#334155', marginBottom: '12px' }}>⚙️ Pengaturan Titik Koordinat Kantor & Geofencing</h3>
-                <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '20px' }}>Admin dapat menentukan titik pusat koordinat GPS kantor dan batas radius toleransi absensi secara mandiri.</p>
-
-                <form onSubmit={handleSimpanPengaturanKantor} style={{ display: 'flex', flexDirection: 'column', gap: '14px', background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Nama Perusahaan / Kantor:</label>
-                    <input type="text" value={inputNamaPerusahaan} onChange={(e) => setInputNamaPerusahaan(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <form onSubmit={handleSimpanPengaturanKantor} style={{ display: 'flex', flexDirection: 'column', gap: '14px', background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                     <div>
-                      <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Latitude Kantor:</label>
-                      <input type="text" placeholder="Contoh: -6.1751" value={inputLat} onChange={(e) => setInputLat(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
+                      <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Nama Perusahaan / Kantor:</label>
+                      <input type="text" value={inputNamaPerusahaan} onChange={(e) => setInputNamaPerusahaan(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
                     </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Latitude Kantor:</label>
+                        <input type="text" placeholder="Contoh: -6.1751" value={inputLat} onChange={(e) => setInputLat(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Longitude Kantor:</label>
+                        <input type="text" placeholder="Contoh: 106.8650" value={inputLng} onChange={(e) => setInputLng(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
+                      </div>
+                    </div>
+
                     <div>
-                      <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Longitude Kantor:</label>
-                      <input type="text" placeholder="Contoh: 106.8650" value={inputLng} onChange={(e) => setInputLng(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
+                      <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Radius Toleransi Geofencing (dalam Meter):</label>
+                      <input type="number" placeholder="Contoh: 200" value={inputRadius} onChange={(e) => setInputRadius(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
                     </div>
-                  </div>
 
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#334155' }}>Radius Toleransi Geofencing (dalam Meter):</label>
-                    <input type="number" placeholder="Contoh: 200" value={inputRadius} onChange={(e) => setInputRadius(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px' }} />
-                  </div>
+                    <button type="submit" disabled={loading} style={{ background: '#10b981', color: 'white', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', marginTop: '6px' }}>{loading ? 'Menyimpan...' : 'Simpan Pengaturan Koordinat'}</button>
+                  </form>
+                </div>
+              )}
+            </div>
+          )}
 
-                  <button type="submit" disabled={loading} style={{ background: '#10b981', color: 'white', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', marginTop: '6px' }}>{loading ? 'Menyimpan...' : 'Simpan Pengaturan Koordinat'}</button>
-                </form>
-              </div>
-            )}
-          </div>
-        )}
+        </div>
+      )}
 
-      </div>
     </div>
   );
 }
