@@ -8,7 +8,9 @@ interface Karyawan {
   jabatan: string;
   email?: string;
   pin?: string;
-  gaji_pokok?: number;
+  tempat_lahir?: string;
+  tanggal_lahir?: string;
+  tahun_lahir?: string;
 }
 
 export default function PortalKaryawan() {
@@ -23,6 +25,10 @@ export default function PortalKaryawan() {
   const [regJabatan, setRegJabatan] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPin, setRegPin] = useState('');
+  const [regTempatLahir, setRegTempatLahir] = useState('');
+  const [regTanggalLahir, setRegTanggalLahir] = useState('');
+  const [regTahunLahir, setRegTahunLahir] = useState('');
+
   const [loading, setLoading] = useState(false);
   const [lupaEmail, setLupaEmail] = useState('');
 
@@ -110,24 +116,41 @@ export default function PortalKaryawan() {
 
   const handleDaftarKaryawan = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!regId || !regNama || !regJabatan || !regEmail || !regPin) {
-      alert('Semua kolom wajib diisi!');
+    if (!regId || !regNama || !regJabatan || !regEmail || !regPin || !regTempatLahir || !regTanggalLahir || !regTahunLahir) {
+      alert('Semua kolom wajib diisi, termasuk tempat, tanggal, dan tahun lahir!');
       return;
     }
     if (!regEmail.includes('@gmail.com')) {
       alert('Gunakan alamat Gmail yang valid.');
       return;
     }
+
+    const { data: existing } = await supabase.from('karyawan').select('*').or(`email.eq.${regEmail},nama.eq.${regNama}`);
+    if (existing && existing.length > 0) {
+      alert('Pendaftaran ditolak! Nama atau Email tersebut sudah terdaftar di sistem.');
+      return;
+    }
+
     setLoading(true);
     await supabase.auth.signUp({ email: regEmail, password: regPin });
     const { error } = await supabase.from('karyawan').insert([
-      { id_karyawan: regId, nama: regNama, jabatan: regJabatan, email: regEmail, pin: regPin, gaji_pokok: 4500000 }
+      { 
+        id_karyawan: regId, 
+        nama: regNama, 
+        jabatan: regJabatan, 
+        email: regEmail, 
+        pin: regPin, 
+        tempat_lahir: regTempatLahir,
+        tanggal_lahir: regTanggalLahir,
+        tahun_lahir: regTahunLahir,
+        gaji_pokok: 4500000 
+      }
     ]);
     setLoading(false);
     if (error) {
       alert('Gagal daftar: ' + error.message);
     } else {
-      alert('Registrasi akun karyawan berhasil! Silakan login.');
+      alert('Registrasi akun karyawan berhasil dan tersimpan di database!');
       fetchKaryawan();
       setSubView('login');
     }
@@ -135,21 +158,42 @@ export default function PortalKaryawan() {
 
   const handleDaftarAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!regNama || !regEmail || !regPin) {
-      alert('Semua kolom wajib diisi!');
+    if (!regNama || !regEmail || !regPin || !regTempatLahir || !regTanggalLahir || !regTahunLahir) {
+      alert('Semua kolom wajib diisi, termasuk tempat, tanggal, dan tahun lahir!');
       return;
     }
     if (!regEmail.includes('@gmail.com')) {
       alert('Gunakan alamat Gmail yang valid.');
       return;
     }
+
+    const { data: existing } = await supabase.from('karyawan').select('*').or(`email.eq.${regEmail},nama.eq.${regNama}`);
+    if (existing && existing.length > 0) {
+      alert('Pendaftaran Admin ditolak! Nama atau Email tersebut sudah terdaftar di database.');
+      return;
+    }
+
     setLoading(true);
-    const { error } = await supabase.auth.signUp({ email: regEmail, password: regPin });
+    await supabase.auth.signUp({ email: regEmail, password: regPin });
+    const { error } = await supabase.from('karyawan').insert([
+      { 
+        id_karyawan: 'ADM-' + Math.floor(1000 + Math.random() * 9000), 
+        nama: regNama, 
+        jabatan: 'Administrator HR', 
+        email: regEmail, 
+        pin: regPin,
+        tempat_lahir: regTempatLahir,
+        tanggal_lahir: regTanggalLahir,
+        tahun_lahir: regTahunLahir,
+        gaji_pokok: 8000000 
+      }
+    ]);
     setLoading(false);
     if (error) {
       alert('Gagal daftar Admin: ' + error.message);
     } else {
-      alert('Akun Admin berhasil didaftarkan! Silakan masuk melalui Dashboard HR.');
+      alert('Akun Admin berhasil didaftarkan dan data tersimpan di database karyawan!');
+      fetchKaryawan();
       setSubView('login');
     }
   };
@@ -256,6 +300,7 @@ export default function PortalKaryawan() {
           <hr/>
           <p><b>Nama:</b> ${karyawanLogin.nama}</p>
           <p><b>Jabatan:</b> ${karyawanLogin.jabatan}</p>
+          <p><b>Tempat/Tgl Lahir:</b> ${karyawanLogin.tempat_lahir || '-'}, ${karyawanLogin.tanggal_lahir || '-'}-${karyawanLogin.tahun_lahir || '-'}</p>
           <p><b>Email:</b> ${karyawanLogin.email || '-'}</p>
           <hr/>
           <p><b>Gaji Pokok:</b> Rp ${gaji.toLocaleString('id-ID')}</p>
@@ -283,10 +328,10 @@ export default function PortalKaryawan() {
     <div style={{ background: '#fff', padding: '24px', borderRadius: '16px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
       {subView === 'login' && !karyawanLogin && (
         <div>
-          <h2 style={{ color: '#0f172a', marginBottom: '16px' }}>👤 Login Karyawan</h2>
+          <h2 style={{ color: '#0f172a', marginBottom: '16px' }}>👤 Login Karyawan / Admin</h2>
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
             <select value={selectedId} onChange={e => setSelectedId(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
-              <option value="">-- Pilih Nama Karyawan --</option>
+              <option value="">-- Pilih Nama Pengguna --</option>
               {daftarKaryawan.map(k => <option key={k.id} value={k.id}>{k.nama} ({k.jabatan})</option>)}
             </select>
             <input type="password" maxLength={6} placeholder="PIN / Password..." value={inputPin} onChange={e => setInputPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
@@ -302,13 +347,18 @@ export default function PortalKaryawan() {
 
       {subView === 'daftar_kry' && (
         <div>
-          <h2 style={{ color: '#0f172a', marginBottom: '16px' }}>✍️ Pendaftaran Akun Karyawan Mandiri</h2>
+          <h2 style={{ color: '#0f172a', marginBottom: '16px' }}>✍️ Pendaftaran Akun Karyawan</h2>
           <form onSubmit={handleDaftarKaryawan} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
             <input type="text" placeholder="ID Karyawan / NIP..." value={regId} onChange={e => setRegId(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="text" placeholder="Nama Lengkap..." value={regNama} onChange={e => setRegNama(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="text" placeholder="Jabatan..." value={regJabatan} onChange={e => setRegJabatan(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            <input type="text" placeholder="Tempat Lahir..." value={regTempatLahir} onChange={e => setRegTempatLahir(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <input type="text" placeholder="Tanggal (Contoh: 15)" value={regTanggalLahir} onChange={e => setRegTanggalLahir(e.target.value)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+              <input type="text" placeholder="Tahun (Contoh: 1998)" value={regTahunLahir} onChange={e => setRegTahunLahir(e.target.value)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            </div>
             <input type="email" placeholder="Alamat Gmail..." value={regEmail} onChange={e => setRegEmail(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-            <input type="password" maxLength={6} placeholder="Buat PIN / Password..." value={regPin} onChange={e => setRegPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            <input type="password" maxLength={6} placeholder="Buat PIN (6 Digit)..." value={regPin} onChange={e => setRegPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <button type="submit" disabled={loading} style={{ background: '#059669', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Daftar Karyawan'}</button>
             <span onClick={() => setSubView('login')} style={{ color: '#64748b', cursor: 'pointer', fontSize: '13px' }}>← Kembali ke Login</span>
           </form>
@@ -317,12 +367,17 @@ export default function PortalKaryawan() {
 
       {subView === 'daftar_adm' && (
         <div>
-          <h2 style={{ color: '#0f172a', marginBottom: '16px' }}>✍️ Pendaftaran Akun Admin Mandiri</h2>
+          <h2 style={{ color: '#0f172a', marginBottom: '16px' }}>✍️ Pendaftaran Akun Admin (Database)</h2>
           <form onSubmit={handleDaftarAdmin} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
             <input type="text" placeholder="Nama Lengkap Admin..." value={regNama} onChange={e => setRegNama(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            <input type="text" placeholder="Tempat Lahir..." value={regTempatLahir} onChange={e => setRegTempatLahir(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <input type="text" placeholder="Tanggal (Contoh: 10)" value={regTanggalLahir} onChange={e => setRegTanggalLahir(e.target.value)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+              <input type="text" placeholder="Tahun (Contoh: 1995)" value={regTahunLahir} onChange={e => setRegTahunLahir(e.target.value)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            </div>
             <input type="email" placeholder="Alamat Gmail Admin..." value={regEmail} onChange={e => setRegEmail(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-            <input type="password" placeholder="Password Admin..." value={regPin} onChange={e => setRegPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-            <button type="submit" disabled={loading} style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Daftar Admin'}</button>
+            <input type="password" placeholder="Password / PIN Admin..." value={regPin} onChange={e => setRegPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            <button type="submit" disabled={loading} style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>{loading ? 'Menyimpan...' : 'Daftar Admin ke Database'}</button>
             <span onClick={() => setSubView('login')} style={{ color: '#64748b', cursor: 'pointer', fontSize: '13px' }}>← Kembali ke Login</span>
           </form>
         </div>
