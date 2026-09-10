@@ -2,7 +2,12 @@ import { useState } from 'react';
 import PortalKaryawan from './PortalKaryawan';
 import DashboardAdmin from './DashboardAdmin';
 
-export default function Navbar() {
+interface NavbarProps {
+  namaPerusahaan?: string;
+  onNavClick?: (view: string) => void;
+}
+
+export default function Navbar(_props: NavbarProps) {
   const [activeTab, setActiveTab] = useState<'home' | 'portal' | 'admin'>('home');
 
   return (
