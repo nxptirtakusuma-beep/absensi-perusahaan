@@ -10,7 +10,7 @@ interface Karyawan {
   pin?: string;
   tempat_lahir?: string;
   tanggal_lahir?: string;
-  bulan_lahir?: string;
+  bulan?: string;
   tahun_lahir?: string;
   gaji_pokok?: number;
 }
@@ -303,7 +303,7 @@ export default function PortalKaryawan() {
           <hr/>
           <p><b>Nama:</b> ${karyawanLogin.nama}</p>
           <p><b>Jabatan:</b> ${karyawanLogin.jabatan}</p>
-          <p><b>Tempat/Tgl Lahir:</b> ${karyawanLogin.tempat_lahir || '-'}, ${karyawanLogin.tanggal_lahir || '-'} ${karyawanLogin.bulan_lahir || '-'} ${karyawanLogin.tahun_lahir || '-'}</p>
+          <p><b>Tempat/Tgl Lahir:</b> ${karyawanLogin.tempat_lahir || '-'}, ${karyawanLogin.tanggal_lahir || '-'} ${karyawanLogin.bulan || '-'} ${karyawanLogin.tahun_lahir || '-'}</p>
           <p><b>Email:</b> ${karyawanLogin.email || '-'}</p>
           <hr/>
           <p><b>Gaji Pokok:</b> Rp ${gaji.toLocaleString('id-ID')}</p>
