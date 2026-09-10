@@ -1,49 +1,38 @@
-import { useState, useEffect } from 'react';
-import { supabase } from './supabaseClient';
+import { useState } from 'react';
 import Navbar from './components/Navbar';
-import LandingPage from './components/LandingPage';
 import PortalKaryawan from './components/PortalKaryawan';
 import DashboardAdmin from './components/DashboardAdmin';
-import ModulPayroll from './components/ModulPayroll';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<'landing' | 'portal' | 'admin'>('landing');
-  const [namaPerusahaan, setNamaPerusahaan] = useState('PT. Moonlight Indonesia');
-  const [activeTab, setActiveTab] = useState<'portal' | 'payroll'>('portal');
-
-  useEffect(() => {
-    async function fetchInfoKantor() {
-      const { data } = await supabase.from('pengaturan_kantor').select('nama_perusahaan').limit(1).single();
-      if (data && data.nama_perusahaan) {
-        setNamaPerusahaan(data.nama_perusahaan);
-      }
-    }
-    fetchInfoKantor();
-  }, []);
+  const [namaPerusahaan] = useState('PT. Moonjustfine');
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
-      <Navbar namaPerusahaan={namaPerusahaan} onNavClick={(view) => setCurrentView(view)} />
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)', fontFamily: 'Arial, sans-serif', color: '#f8fafc' }}>
+      {/* Komponen Navbar dengan properti lengkap */}
+      <Navbar 
+        namaPerusahaan={namaPerusahaan} 
+        onNavClick={(view: any) => setCurrentView(view)} 
+      />
 
-      <main style={{ maxWidth: '1100px', margin: '30px auto', padding: '0 20px' }}>
+      {/* Konten Utama Berdasarkan Navigasi */}
+      <div style={{ padding: '40px 20px', maxWidth: '900px', margin: '0 auto' }}>
         {currentView === 'landing' && (
-          <LandingPage onMulai={() => setCurrentView('portal')} namaPerusahaan={namaPerusahaan} />
-        )}
-
-        {currentView === 'portal' && (
-          <div>
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-              <button onClick={() => setActiveTab('portal')} style={{ padding: '8px 16px', background: activeTab === 'portal' ? '#0f172a' : '#e2e8f0', color: activeTab === 'portal' ? '#fff' : '#475569', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Portal Karyawan</button>
-              <button onClick={() => setActiveTab('payroll')} style={{ padding: '8px 16px', background: activeTab === 'payroll' ? '#0f172a' : '#e2e8f0', color: activeTab === 'payroll' ? '#fff' : '#475569', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Informasi Payroll</button>
-            </div>
-            {activeTab === 'portal' ? <PortalKaryawan /> : <ModulPayroll />}
+          <div style={{ background: '#1e293b', padding: '40px', borderRadius: '20px', border: '1px solid #334155', textAlign: 'center', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' }}>
+            <span style={{ background: '#0284c7', color: '#fff', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>Platform HRIS Enterprise Berstandar Tinggi</span>
+            <h1 style={{ fontSize: '28px', color: '#fff', margin: '20px 0 10px 0' }}>Sistem Manajemen {namaPerusahaan}</h1>
+            <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: '1.6', maxWidth: '650px', margin: '0 auto 30px auto' }}>
+              Solusi enterprise mutakhir dengan geofencing GPS, verifikasi wajah (*Vermuk*), perhitungan jam kerja real-time, manajemen gaji proaktif, hingga unduh laporan resmi.
+            </p>
+            <button onClick={() => setCurrentView('portal')} style={{ background: '#38bdf8', color: '#0f172a', border: 'none', padding: '12px 24px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px' }}>
+              Masuk Portal Eksekutif →
+            </button>
           </div>
         )}
 
-        {currentView === 'admin' && (
-          <DashboardAdmin />
-        )}
-      </main>
+        {currentView === 'portal' && <PortalKaryawan />}
+        {currentView === 'admin' && <DashboardAdmin />}
+      </div>
     </div>
   );
 }
