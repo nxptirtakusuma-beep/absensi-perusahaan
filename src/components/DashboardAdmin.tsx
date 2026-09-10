@@ -9,8 +9,8 @@ interface Karyawan {
   pin?: string;
   tempat_lahir?: string;
   tanggal_lahir?: string;
-  tahun_lahir?: string;
   bulan_lahir?: string;
+  tahun_lahir?: string;
 }
 
 export default function DashboardAdmin() {
