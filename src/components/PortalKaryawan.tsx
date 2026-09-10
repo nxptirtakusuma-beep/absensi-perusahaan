@@ -19,6 +19,23 @@ export default function PortalKaryawan() {
   const [selectedId, setSelectedId] = useState('');
   const [inputPin, setInputPin] = useState('');
   const [karyawanLogin, setKaryawanLogin] = useState<Karyawan | null>(null);
+  const [regBulanLahir, setRegBulanLahir] = useState('');
+  
+  <select value={regBulanLahir} onChange={e => setRegBulanLahir(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+  <option value="">-- Pilih Bulan Lahir --</option>
+  <option value="Januari">Januari</option>
+  <option value="Februari">Februari</option>
+  <option value="Maret">Maret</option>
+  <option value="April">April</option>
+  <option value="Mei">Mei</option>
+  <option value="Juni">Juni</option>
+  <option value="Juli">Juli</option>
+  <option value="Agustus">Agustus</option>
+  <option value="September">September</option>
+  <option value="Oktober">Oktober</option>
+  <option value="November">November</option>
+  <option value="Desember">Desember</option>
+</select>
 
   const [regId, setRegId] = useState('');
   const [regNama, setRegNama] = useState('');
