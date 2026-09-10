@@ -6,20 +6,11 @@ interface Karyawan {
   nama: string;
   jabatan: string;
   email?: string;
+  pin?: string;
   tempat_lahir?: string;
   tanggal_lahir?: string;
   tahun_lahir?: string;
-}
-
-interface Absen {
-  id: string;
-  nama: string;
-  tanggal: string;
-  jam_masuk: string;
-  jam_pulang: string;
-  total_jam: string;
-  status: string;
-  lokasi?: string;
+  bulan_lahir?: string;
 }
 
 export default function DashboardAdmin() {
@@ -27,23 +18,16 @@ export default function DashboardAdmin() {
   const [adminUser, setAdminUser] = useState('');
   const [adminPass, setAdminPass] = useState('');
   const [daftarKaryawan, setDaftarKaryawan] = useState<Karyawan[]>([]);
-  const [riwayatAbsen, setRiwayatAbsen] = useState<Absen[]>([]);
 
   useEffect(() => {
     if (isLoggedIn) {
       fetchKaryawan();
-      fetchRiwayatAbsen();
     }
   }, [isLoggedIn]);
 
   const fetchKaryawan = async () => {
     const { data } = await supabase.from('karyawan').select('*').order('nama');
     if (data) setDaftarKaryawan(data);
-  };
-
-  const fetchRiwayatAbsen = async () => {
-    const { data } = await supabase.from('absensi').select('*').order('created_at', { ascending: false });
-    if (data) setRiwayatAbsen(data);
   };
 
   const handleLoginAdmin = (e: React.FormEvent) => {
@@ -68,9 +52,9 @@ export default function DashboardAdmin() {
   };
 
   const handleExportExcel = () => {
-    let csv = "Nama Pegawai;Jabatan;Email;Tempat Lahir;Tanggal Lahir;Tahun Lahir\n";
+    let csv = "Nama Pegawai;Jabatan;Email;Tempat Lahir;Tanggal Lahir;Bulan Lahir;Tahun Lahir\n";
     daftarKaryawan.forEach(k => {
-      csv += `"${k.nama}";"${k.jabatan}";"${k.email || '-'}";"${k.tempat_lahir || '-'}";"${k.tanggal_lahir || '-'}";"${k.tahun_lahir || '-'}"\n`;
+      csv += `"${k.nama}";"${k.jabatan}";"${k.email || '-'}";"${k.tempat_lahir || '-'}";"${k.tanggal_lahir || '-'}";"${k.bulan_lahir || '-'}";"${k.tahun_lahir || '-'}"\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
@@ -118,7 +102,7 @@ export default function DashboardAdmin() {
             <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', color: '#475569' }}>
               <th style={{ padding: '10px' }}>Nama</th>
               <th style={{ padding: '10px' }}>Jabatan</th>
-              <th style={{ padding: '10px' }}>Tempat, Tgl & Thn Lahir</th>
+              <th style={{ padding: '10px' }}>Tempat, Tgl, Bln & Thn Lahir</th>
               <th style={{ padding: '10px' }}>Email Gmail</th>
               <th style={{ padding: '10px' }}>Aksi Database</th>
             </tr>
@@ -131,7 +115,7 @@ export default function DashboardAdmin() {
                 <tr key={k.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                   <td style={{ padding: '10px', fontWeight: 'bold' }}>{k.nama}</td>
                   <td style={{ padding: '10px', color: '#64748b' }}>{k.jabatan}</td>
-                  <td style={{ padding: '10px', color: '#334155' }}>{k.tempat_lahir || '-'}, {k.tanggal_lahir || '-'}-{k.tahun_lahir || '-'}</td>
+                  <td style={{ padding: '10px', color: '#334155' }}>{k.tempat_lahir || '-' }, {k.tanggal_lahir || '-'} {k.bulan_lahir || '-'} {k.tahun_lahir || '-'}</td>
                   <td style={{ padding: '10px', color: '#0284c7' }}>{k.email || '-'}</td>
                   <td style={{ padding: '10px' }}>
                     <button onClick={() => handleHapusKaryawan(k.id, k.nama)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold' }}>Hapus Akun</button>
