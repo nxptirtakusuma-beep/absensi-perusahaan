@@ -135,7 +135,6 @@ export default function PortalKaryawan() {
     }
 
     setLoading(true);
-    await supabase.auth.signUp({ email: regEmail, password: regPin });
     const { error } = await supabase.from('karyawan').insert([
       { 
         id_karyawan: regId, 
