@@ -144,7 +144,7 @@ export default function PortalKaryawan() {
         pin: regPin, 
         tempat_lahir: regTempatLahir,
         tanggal_lahir: regTanggalLahir,
-        bulan_lahir: regBulanLahir,
+        bulan: regBulanLahir,
         tahun_lahir: regTahunLahir,
         gaji_pokok: 4500000 
       }
@@ -177,7 +177,6 @@ export default function PortalKaryawan() {
     }
 
     setLoading(true);
-    await supabase.auth.signUp({ email: regEmail, password: regPin });
     const { error } = await supabase.from('karyawan').insert([
       { 
         id_karyawan: 'ADM-' + Math.floor(1000 + Math.random() * 9000), 
@@ -187,7 +186,7 @@ export default function PortalKaryawan() {
         pin: regPin,
         tempat_lahir: regTempatLahir,
         tanggal_lahir: regTanggalLahir,
-        bulan_lahir: regBulanLahir,
+        bulan: regBulanLahir,
         tahun_lahir: regTahunLahir,
         gaji_pokok: 8000000 
       }
