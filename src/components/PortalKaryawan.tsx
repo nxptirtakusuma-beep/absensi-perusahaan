@@ -10,7 +10,9 @@ interface Karyawan {
   pin?: string;
   tempat_lahir?: string;
   tanggal_lahir?: string;
+  bulan_lahir?: string;
   tahun_lahir?: string;
+  gaji_pokok?: number;
 }
 
 export default function PortalKaryawan() {
@@ -19,23 +21,6 @@ export default function PortalKaryawan() {
   const [selectedId, setSelectedId] = useState('');
   const [inputPin, setInputPin] = useState('');
   const [karyawanLogin, setKaryawanLogin] = useState<Karyawan | null>(null);
-  const [regBulanLahir, setRegBulanLahir] = useState('');
-  
-  <select value={regBulanLahir} onChange={e => setRegBulanLahir(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
-  <option value="">-- Pilih Bulan Lahir --</option>
-  <option value="Januari">Januari</option>
-  <option value="Februari">Februari</option>
-  <option value="Maret">Maret</option>
-  <option value="April">April</option>
-  <option value="Mei">Mei</option>
-  <option value="Juni">Juni</option>
-  <option value="Juli">Juli</option>
-  <option value="Agustus">Agustus</option>
-  <option value="September">September</option>
-  <option value="Oktober">Oktober</option>
-  <option value="November">November</option>
-  <option value="Desember">Desember</option>
-</select>
 
   const [regId, setRegId] = useState('');
   const [regNama, setRegNama] = useState('');
@@ -44,6 +29,7 @@ export default function PortalKaryawan() {
   const [regPin, setRegPin] = useState('');
   const [regTempatLahir, setRegTempatLahir] = useState('');
   const [regTanggalLahir, setRegTanggalLahir] = useState('');
+  const [regBulanLahir, setRegBulanLahir] = useState('');
   const [regTahunLahir, setRegTahunLahir] = useState('');
 
   const [loading, setLoading] = useState(false);
@@ -133,8 +119,8 @@ export default function PortalKaryawan() {
 
   const handleDaftarKaryawan = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!regId || !regNama || !regJabatan || !regEmail || !regPin || !regTempatLahir || !regTanggalLahir || !regTahunLahir) {
-      alert('Semua kolom wajib diisi, termasuk tempat, tanggal, dan tahun lahir!');
+    if (!regId || !regNama || !regJabatan || !regEmail || !regPin || !regTempatLahir || !regTanggalLahir || !regBulanLahir || !regTahunLahir) {
+      alert('Semua kolom wajib diisi, termasuk tempat, tanggal, bulan, dan tahun lahir!');
       return;
     }
     if (!regEmail.includes('@gmail.com')) {
@@ -159,6 +145,7 @@ export default function PortalKaryawan() {
         pin: regPin, 
         tempat_lahir: regTempatLahir,
         tanggal_lahir: regTanggalLahir,
+        bulan_lahir: regBulanLahir,
         tahun_lahir: regTahunLahir,
         gaji_pokok: 4500000 
       }
@@ -175,8 +162,8 @@ export default function PortalKaryawan() {
 
   const handleDaftarAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!regNama || !regEmail || !regPin || !regTempatLahir || !regTanggalLahir || !regTahunLahir) {
-      alert('Semua kolom wajib diisi, termasuk tempat, tanggal, dan tahun lahir!');
+    if (!regNama || !regEmail || !regPin || !regTempatLahir || !regTanggalLahir || !regBulanLahir || !regTahunLahir) {
+      alert('Semua kolom wajib diisi, termasuk tempat, tanggal, bulan, dan tahun lahir!');
       return;
     }
     if (!regEmail.includes('@gmail.com')) {
@@ -201,6 +188,7 @@ export default function PortalKaryawan() {
         pin: regPin,
         tempat_lahir: regTempatLahir,
         tanggal_lahir: regTanggalLahir,
+        bulan_lahir: regBulanLahir,
         tahun_lahir: regTahunLahir,
         gaji_pokok: 8000000 
       }
@@ -317,7 +305,7 @@ export default function PortalKaryawan() {
           <hr/>
           <p><b>Nama:</b> ${karyawanLogin.nama}</p>
           <p><b>Jabatan:</b> ${karyawanLogin.jabatan}</p>
-          <p><b>Tempat/Tgl Lahir:</b> ${karyawanLogin.tempat_lahir || '-'}, ${karyawanLogin.tanggal_lahir || '-'}-${karyawanLogin.tahun_lahir || '-'}</p>
+          <p><b>Tempat/Tgl Lahir:</b> ${karyawanLogin.tempat_lahir || '-'}, ${karyawanLogin.tanggal_lahir || '-'} ${karyawanLogin.bulan_lahir || '-'} ${karyawanLogin.tahun_lahir || '-'}</p>
           <p><b>Email:</b> ${karyawanLogin.email || '-'}</p>
           <hr/>
           <p><b>Gaji Pokok:</b> Rp ${gaji.toLocaleString('id-ID')}</p>
@@ -370,9 +358,24 @@ export default function PortalKaryawan() {
             <input type="text" placeholder="Nama Lengkap..." value={regNama} onChange={e => setRegNama(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="text" placeholder="Jabatan..." value={regJabatan} onChange={e => setRegJabatan(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="text" placeholder="Tempat Lahir..." value={regTempatLahir} onChange={e => setRegTempatLahir(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input type="text" placeholder="Tanggal (Contoh: 15)" value={regTanggalLahir} onChange={e => setRegTanggalLahir(e.target.value)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-              <input type="text" placeholder="Tahun (Contoh: 1998)" value={regTahunLahir} onChange={e => setRegTahunLahir(e.target.value)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <input type="text" placeholder="Tgl (1-31)" value={regTanggalLahir} onChange={e => setRegTanggalLahir(e.target.value)} style={{ width: '30%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+              <select value={regBulanLahir} onChange={e => setRegBulanLahir(e.target.value)} style={{ width: '40%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                <option value="">Bulan</option>
+                <option value="Januari">Januari</option>
+                <option value="Februari">Februari</option>
+                <option value="Maret">Maret</option>
+                <option value="April">April</option>
+                <option value="Mei">Mei</option>
+                <option value="Juni">Juni</option>
+                <option value="Juli">Juli</option>
+                <option value="Agustus">Agustus</option>
+                <option value="September">September</option>
+                <option value="Oktober">Oktober</option>
+                <option value="November">November</option>
+                <option value="Desember">Desember</option>
+              </select>
+              <input type="text" placeholder="Tahun" value={regTahunLahir} onChange={e => setRegTahunLahir(e.target.value)} style={{ width: '30%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             </div>
             <input type="email" placeholder="Alamat Gmail..." value={regEmail} onChange={e => setRegEmail(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="password" maxLength={6} placeholder="Buat PIN (6 Digit)..." value={regPin} onChange={e => setRegPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
@@ -388,9 +391,24 @@ export default function PortalKaryawan() {
           <form onSubmit={handleDaftarAdmin} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '360px' }}>
             <input type="text" placeholder="Nama Lengkap Admin..." value={regNama} onChange={e => setRegNama(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="text" placeholder="Tempat Lahir..." value={regTempatLahir} onChange={e => setRegTempatLahir(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input type="text" placeholder="Tanggal (Contoh: 10)" value={regTanggalLahir} onChange={e => setRegTanggalLahir(e.target.value)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
-              <input type="text" placeholder="Tahun (Contoh: 1995)" value={regTahunLahir} onChange={e => setRegTahunLahir(e.target.value)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <input type="text" placeholder="Tgl (1-31)" value={regTanggalLahir} onChange={e => setRegTanggalLahir(e.target.value)} style={{ width: '30%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+              <select value={regBulanLahir} onChange={e => setRegBulanLahir(e.target.value)} style={{ width: '40%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                <option value="">Bulan</option>
+                <option value="Januari">Januari</option>
+                <option value="Februari">Februari</option>
+                <option value="Maret">Maret</option>
+                <option value="April">April</option>
+                <option value="Mei">Mei</option>
+                <option value="Juni">Juni</option>
+                <option value="Juli">Juli</option>
+                <option value="Agustus">Agustus</option>
+                <option value="September">September</option>
+                <option value="Oktober">Oktober</option>
+                <option value="November">November</option>
+                <option value="Desember">Desember</option>
+              </select>
+              <input type="text" placeholder="Tahun" value={regTahunLahir} onChange={e => setRegTahunLahir(e.target.value)} style={{ width: '30%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             </div>
             <input type="email" placeholder="Alamat Gmail Admin..." value={regEmail} onChange={e => setRegEmail(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             <input type="password" placeholder="Password / PIN Admin..." value={regPin} onChange={e => setRegPin(e.target.value)} style={{ padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
